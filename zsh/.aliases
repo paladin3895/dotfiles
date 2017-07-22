@@ -40,3 +40,5 @@ alias :s9="copyq tab clipboard copy \"`:n9`\" &> /dev/null"
 
 alias :n="copyq_notes"
 alias :c="copyq_clipboard"
+
+alias :lp="lastpass_clip_password"

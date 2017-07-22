@@ -1,6 +1,18 @@
 #!/bin/sh
-command=$(zenity --entry --title "Enter command" --text "");
-echo $command
+
+## Handling user input ##
+input=$(zenity --entry --title "Enter command" --text "");
+command=`echo "$input" | tr -s ' ' | cut -d ' ' -f 1`;
+arg=`echo "$input" | tr -s ' ' | cut -d ' ' -f 2`;
+
+## Utility functions ##
+lastpass_clip_password() {
+    name="$1";
+    # echo $name
+    lpass ls --color=never | grep -F "$name" | grep -oP '\[id\:\s([0-9]{19})\]' | head -n 1 | grep -oP '[0-9]+' | xargs lpass show --clip --password;
+}
+
+## Command switch ##
 case "$command" in
     "c1") copyq tab clipboard select 1 &> /dev/null;;
     "c2") copyq tab clipboard select 2 &> /dev/null;;
@@ -44,4 +56,6 @@ case "$command" in
 
     # "n") copyq_notes;;
     # "c") copyq_clipboard;;
+
+    "lp") lastpass_clip_password $arg;;
 esac
