@@ -9,7 +9,7 @@ arg=`echo "$input" | tr -s ' ' | cut -d ' ' -f 2`;
 lastpass_clip_password() {
     name="$1";
     # echo $name
-    lpass ls --color=never | grep -F "$name" | grep -oP '\[id\:\s([0-9]{19})\]' | head -n 1 | grep -oP '[0-9]+' | xargs lpass show --clip --password;
+    lpass ls --color=never | grep -F "$name" | grep -oP '\[id\:\s([0-9]+)\]' | head -n 1 | grep -oP '[0-9]+' | xargs lpass show --clip --password;
 }
 
 ## Command switch ##
