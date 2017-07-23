@@ -1,61 +1,90 @@
-#!/bin/sh
+#!/bin/zsh
+
+content_file="/tmp/.semicolon.content";
+echo "" > $content_file;
+
+error_file="/tmp/.semicolon.error";
+echo "" > $error_file;
 
 ## Handling user input ##
 input=$(zenity --entry --title "Enter command" --text "");
-command=`echo "$input" | tr -s ' ' | cut -d ' ' -f 1`;
-arg=`echo "$input" | tr -s ' ' | cut -d ' ' -f 2`;
+prefix=$(echo "$input" | cut -c1-1 | grep "[\<\:\>\;]");
+if [ "" != "$prefix" ]
+then
+    input=$(echo "$input" | cut -c 2-);
+else
+    prefix="<";
+fi
+
+command=$(echo "$input" | tr -s ' ' | cut -d ' ' -f 1);
+args=$(echo "$input" | tr -s ' ' | cut -d ' ' -f 2-);
 
 ## Utility functions ##
-lastpass_clip_password() {
-    name="$1";
-    # echo $name
-    lpass ls --color=never | grep -F "$name" | grep -oP '\[id\:\s([0-9]+)\]' | head -n 1 | grep -oP '[0-9]+' | xargs lpass show --clip --password;
+source ~/.utilities;
+zenity_info() {
+	content="$1";
+	zenity --text-info \
+		   --title="Information" \
+		   --filename="$content" \
+		   --font=monospace;
 }
 
 ## Command switch ##
+## Command template
+## "{key}") {command} $args 2>$error_file | tee 1>$content_file | read content
+
 case "$command" in
-    "c1") copyq tab clipboard select 1 &> /dev/null;;
-    "c2") copyq tab clipboard select 2 &> /dev/null;;
-    "c3") copyq tab clipboard select 3 &> /dev/null;;
-    "c4") copyq tab clipboard select 4 &> /dev/null;;
-    "c5") copyq tab clipboard select 5 &> /dev/null;;
-    "c6") copyq tab clipboard select 6 &> /dev/null;;
-    "c7") copyq tab clipboard select 7 &> /dev/null;;
-    "c8") copyq tab clipboard select 8 &> /dev/null;;
-    "c9") copyq tab clipboard select 9 &> /dev/null;;
+    "c0") copyq_clipboard_read 0 $args 2>$error_file | tee 1>$content_file;;
+    "c1") copyq_clipboard_read 1 $args 2>$error_file | tee 1>$content_file;;
+    "c2") copyq_clipboard_read 2 $args 2>$error_file | tee 1>$content_file;;
+    "c3") copyq_clipboard_read 3 $args 2>$error_file | tee 1>$content_file;;
+    "c4") copyq_clipboard_read 4 $args 2>$error_file | tee 1>$content_file;;
+    "c5") copyq_clipboard_read 5 $args 2>$error_file | tee 1>$content_file;;
+    "c6") copyq_clipboard_read 6 $args 2>$error_file | tee 1>$content_file;;
+    "c7") copyq_clipboard_read 7 $args 2>$error_file | tee 1>$content_file;;
+    "c8") copyq_clipboard_read 8 $args 2>$error_file | tee 1>$content_file;;
+    "c9") copyq_clipboard_read 9 $args 2>$error_file | tee 1>$content_file;;
 
-    # "n1") copyq tab notes read 0 | rev | cut -c 1- | rev;;
-    # "n2") copyq tab notes read 1 | rev | cut -c 1- | rev;;
-    # "n3") copyq tab notes read 2 | rev | cut -c 1- | rev;;
-    # "n4") copyq tab notes read 3 | rev | cut -c 1- | rev;;
-    # "n5") copyq tab notes read 4 | rev | cut -c 1- | rev;;
-    # "n6") copyq tab notes read 5 | rev | cut -c 1- | rev;;
-    # "n7") copyq tab notes read 6 | rev | cut -c 1- | rev;;
-    # "n8") copyq tab notes read 7 | rev | cut -c 1- | rev;;
-    # "n9") copyq tab notes read 8 | rev | cut -c 1- | rev;;
+    "n1") copyq_note_read 0 $args 2>$error_file | tee 1>$content_file;;
+    "n2") copyq_note_read 1 $args 2>$error_file | tee 1>$content_file;;
+    "n3") copyq_note_read 2 $args 2>$error_file | tee 1>$content_file;;
+    "n4") copyq_note_read 3 $args 2>$error_file | tee 1>$content_file;;
+    "n5") copyq_note_read 4 $args 2>$error_file | tee 1>$content_file;;
+    "n6") copyq_note_read 5 $args 2>$error_file | tee 1>$content_file;;
+    "n7") copyq_note_read 6 $args 2>$error_file | tee 1>$content_file;;
+    "n8") copyq_note_read 7 $args 2>$error_file | tee 1>$content_file;;
+    "n9") copyq_note_read 8 $args 2>$error_file | tee 1>$content_file;;
 
-    "i1") copyq tab notes insert 0;;
-    "i2") copyq tab notes insert 1;;
-    "i3") copyq tab notes insert 2;;
-    "i4") copyq tab notes insert 3;;
-    "i5") copyq tab notes insert 4;;
-    "i6") copyq tab notes insert 5;;
-    "i7") copyq tab notes insert 6;;
-    "i8") copyq tab notes insert 7;;
-    "i9") copyq tab notes insert 8;;
+    "u1") copyq_note_update 0 $args 2>$error_file | tee 1>$content_file;;
+    "u2") copyq_note_update 1 $args 2>$error_file | tee 1>$content_file;;
+    "u3") copyq_note_update 2 $args 2>$error_file | tee 1>$content_file;;
+    "u4") copyq_note_update 3 $args 2>$error_file | tee 1>$content_file;;
+    "u5") copyq_note_update 4 $args 2>$error_file | tee 1>$content_file;;
+    "u6") copyq_note_update 5 $args 2>$error_file | tee 1>$content_file;;
+    "u7") copyq_note_update 6 $args 2>$error_file | tee 1>$content_file;;
+    "u8") copyq_note_update 7 $args 2>$error_file | tee 1>$content_file;;
+    "u9") copyq_note_update 8 $args 2>$error_file | tee 1>$content_file;;
 
-    "s1") copyq tab clipboard copy "`copyq tab notes read 0 | rev | cut -c 1- | rev`";;
-    "s2") copyq tab clipboard copy "`copyq tab notes read 1 | rev | cut -c 1- | rev`";;
-    "s3") copyq tab clipboard copy "`copyq tab notes read 2 | rev | cut -c 1- | rev`";;
-    "s4") copyq tab clipboard copy "`copyq tab notes read 3 | rev | cut -c 1- | rev`";;
-    "s5") copyq tab clipboard copy "`copyq tab notes read 4 | rev | cut -c 1- | rev`";;
-    "s6") copyq tab clipboard copy "`copyq tab notes read 5 | rev | cut -c 1- | rev`";;
-    "s7") copyq tab clipboard copy "`copyq tab notes read 6 | rev | cut -c 1- | rev`";;
-    "s8") copyq tab clipboard copy "`copyq tab notes read 7 | rev | cut -c 1- | rev`";;
-    "s9") copyq tab clipboard copy "`copyq tab notes read 8 | rev | cut -c 1- | rev`";;
+    "n") copyq_notes $args 2>$error_file | tee 1>$content_file;;
+    "c") copyq_clipboard $args 2>$error_file | tee 1>$content_file;;
 
-    # "n") copyq_notes;;
-    # "c") copyq_clipboard;;
+    "lp") lastpass_show_password $args 2>$error_file | tee 1>$content_file;;
+    "lpu") lastpass_show_username $args 2>$error_file | tee 1>$content_file;;
+    "lpn") lastpass_show_note $args 2>$error_file | tee 1>$content_file;;
 
-    "lp") lastpass_clip_password $arg;;
+    *) /bin/zsh -c "$input" 2>$error_file | tee 1>$content_file;;
 esac
+
+if [ "" = "$(cat $error_file)" ]
+then
+    case "$prefix" in
+        "<") zenity_info "$content_file";;
+        ">") copyq_clipboard_copy "$(cat $content_file)";;
+        ":") zenity_info "$content_file";
+             copyq_clipboard_copy "$(cat $content_file)";;
+        ";") zenity_info "$content_file";
+             copyq_clipboard_copy "$(cat $content_file)";;
+     esac
+else
+    zenity --error --text="$(cat $error_file)";
+fi

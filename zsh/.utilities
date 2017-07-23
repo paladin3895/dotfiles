@@ -1,5 +1,4 @@
 #!/bin/sh
-
 copyq_clipboard() {
     for i in -1 0 1 2 3 4 5 6 7 8
     do
@@ -14,22 +13,85 @@ copyq_clipboard() {
     done
 }
 
+copyq_clipboard_read() {
+    index=$(( $1 ));
+    copyq tab clipboard read $index | rev | cut -c 1- | rev;
+}
+
+copyq_clipboard_select() {
+    index=$(( $1 ));
+    copyq tab clipboard select $index;
+}
+
+copyq_clipboard_copy() {
+    content="$1";
+    copyq tab clipboard copy "$content" &>/dev/null;
+}
+
 copyq_notes() {
-    for i in 0 1 2 3 4 5 6 7 8
+    for i in 1 2 3 4 5 6 7 8 9
     do
-        index=$(( i + 1 ));
-        content=`copyq tab notes read $i`;
+        index=$(( i - 1 ));
+        content=`copyq tab notes read $index`;
         if [ "$content" != "" ]
         then
-            echo "[$index] -------------------------------------------\n"
+            echo "[$i] -------------------------------------------\n"
             echo $content;
             echo "\n";
         fi
     done
 }
 
+copyq_note_read() {
+    index=$(( $1 ));
+    copyq tab notes read $index | rev | cut -c 1- | rev;
+}
+
+copyq_note_select() {
+    index=$(( $1 ));
+    copyq tab clipboard copy "`copyq_note_read $index`";
+}
+
+copyq_note_insert() {
+    index=$(( $1 ));
+    content=$2
+    copyq tab notes insert $index "$content";
+}
+
+copyq_note_update() {
+    index=$(( $1 ));
+    content=$2
+    copyq tab notes write $index "text/plain" "$content";
+}
+
+lastpass_search_item() {
+    name="$1";
+    id=$(lpass ls --color=never | grep -F "$name" | grep -oP '\[id\:\s([0-9]+)\]' | head -n 1 | grep -oP '[0-9]+');
+    if [ "" != "$id" ]
+    then
+        echo $id;
+    else
+        echo "Item not found" >&2;
+    fi
+}
+
 lastpass_clip_password() {
     name="$1";
     # echo $name
-    lpass ls --color=never | grep -F "$name" | grep -oP '\[id\:\s([0-9]+)\]' | head -n 1 | grep -oP '[0-9]+' | xargs lpass show --clip --password;
+    lastpass_search_item "$name" | xargs lpass show --clip --password;
+}
+
+lastpass_show_password() {
+    name="$1";
+    lastpass_search_item "$name" | xargs lpass show --password;
+}
+
+lastpass_show_username() {
+    name="$1";
+    lastpass_search_item "$name" | xargs lpass show --username;
+}
+
+lastpass_show_note() {
+    name="$1";
+    lastpass_search_item "$name" | xargs lpass show --notes;
 }
