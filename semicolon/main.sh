@@ -72,6 +72,8 @@ case "$command" in
     "lpu") lastpass_show_username $args 2>$error_file | tee 1>$content_file;;
     "lpn") lastpass_show_note $args 2>$error_file | tee 1>$content_file;;
 
+    "bc") bc_calculator $args 2>$error_file | tee 1>$content_file;;
+
     *) /bin/zsh -c "$input" 2>$error_file | tee 1>$content_file;;
 esac
 

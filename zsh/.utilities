@@ -95,3 +95,8 @@ lastpass_show_note() {
     name="$1";
     lastpass_search_item "$name" | xargs lpass show --notes;
 }
+
+bc_calculator() {
+    data="$1";
+    echo "scale=4; $data" | bc;
+}
