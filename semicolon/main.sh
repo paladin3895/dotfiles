@@ -13,7 +13,7 @@ if [ "" != "$prefix" ]
 then
     input=$(echo "$input" | cut -c 2-);
 else
-    prefix="<";
+    prefix=";";
 fi
 
 command=$(echo "$input" | tr -s ' ' | cut -d ' ' -f 1);
@@ -82,8 +82,7 @@ then
         ">") copyq_clipboard_copy "$(cat $content_file)";;
         ":") zenity_info "$content_file";
              copyq_clipboard_copy "$(cat $content_file)";;
-        ";") zenity_info "$content_file";
-             copyq_clipboard_copy "$(cat $content_file)";;
+        ";") ;;
      esac
 else
     zenity --error --text="$(cat $error_file)";
