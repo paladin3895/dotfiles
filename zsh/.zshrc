@@ -85,4 +85,3 @@ source ~/.aliases
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias kill_chrome="ps -aux | grep chrome | tr -s ' ' | cut -d' ' -f 2 | sudo xargs kill"

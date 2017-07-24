@@ -579,3 +579,22 @@ else
   let g:airline_symbols.readonly = ''
   let g:airline_symbols.linenr = ''
 endif
+
+"*****************************************************************************
+"" Experiment
+"*****************************************************************************
+" Make space more useful
+nnoremap <Space> za
+nnoremap + <C-A>
+nnoremap - <C-X>
+
+" Surround in visual mode
+vnoremap ' c'<Esc>pa'<Esc>
+vnoremap " c"<Esc>pa"<Esc>
+vnoremap ` c`<Esc>pa`<Esc>
+vnoremap ( c(<Space><Esc>pa<Space>)<Esc>
+vnoremap ) c(<Esc>pa)<Esc>
+vnoremap [ c[<Space><Esc>pa<Space>]<Esc>
+vnoremap ] c[<Esc>pa]<Esc>
+vnoremap { c{<Space><Esc>pa<Space>}<Esc>
+vnoremap } c{<Esc>pa}<Esc>

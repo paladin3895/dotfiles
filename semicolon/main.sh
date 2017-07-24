@@ -72,6 +72,12 @@ case "$command" in
     "lpu") lastpass_show_username $args 2>$error_file | tee 1>$content_file;;
     "lpn") lastpass_show_note $args 2>$error_file | tee 1>$content_file;;
 
+    "nvim") gnome-terminal -e nvim $args 2>$error_file | tee 1>$content_file;;
+    "htop") gnome-terminal -e htop $args 2>$error_file | tee 1>$content_file;;
+    "ranger") gnome-terminal -e ranger $args 2>$error_file | tee 1>$content_file;;
+    "url") sensible-browser $args 2>$error_file | tee 1>$content_file;;
+    "homestead") cd ~/Projects/Vagrant/homestead && vagrant $args 2>$error_file | tee 1>$content_file;;
+
     "bc") bc_calculator $args 2>$error_file | tee 1>$content_file;;
 
     *) /bin/zsh -c "$input" 2>$error_file | tee 1>$content_file;;

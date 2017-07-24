@@ -100,3 +100,7 @@ bc_calculator() {
     data="$1";
     echo "scale=4; $data" | bc;
 }
+
+kill_chrome() {
+    sh -e `ps -aux | grep chrome | tr -s ' ' | cut -d' ' -f 2 | sudo xargs kill`;
+}
