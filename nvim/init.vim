@@ -250,7 +250,7 @@ let g:syntastic_javascript_checkers = ['eslint']
 " let g:syntastic_javascript_eslint_exe = 'eslint .'
 
 " w3m
-nnoremap <leader>w3t :W3mTab 
+nnoremap <leader>w3t :W3mTab<Space>
 nnoremap <leader>w3y :W3mTab <C-r>0
 
 "*****************************************************************************
@@ -291,6 +291,8 @@ let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
 let g:vimshell_prompt =  '$ '
 
 " terminal emulation
+set splitbelow
+set splitright
 if g:vim_bootstrap_editor == 'nvim'
   nnoremap <silent> <leader>sh :terminal<CR>
 else
@@ -584,17 +586,37 @@ endif
 "" Experiment
 "*****************************************************************************
 " Make space more useful
-nnoremap <Space> za
+nnoremap <Leader>sv :source $MYVIMRC<CR>
+nnoremap <Space> li<CR><Esc>O
+nnoremap <Backspace> kJJhs
 nnoremap + <C-A>
 nnoremap - <C-X>
 
 " Surround in visual mode
-vnoremap ' c'<Esc>pa'<Esc>
-vnoremap " c"<Esc>pa"<Esc>
-vnoremap ` c`<Esc>pa`<Esc>
-vnoremap ( c(<Space><Esc>pa<Space>)<Esc>
-vnoremap ) c(<Esc>pa)<Esc>
-vnoremap [ c[<Space><Esc>pa<Space>]<Esc>
-vnoremap ] c[<Esc>pa]<Esc>
-vnoremap { c{<Space><Esc>pa<Space>}<Esc>
-vnoremap } c{<Esc>pa}<Esc>
+vnoremap <Leader>' c'<Esc>pa'<Esc>
+vnoremap <Leader>" c"<Esc>pa"<Esc>
+vnoremap <Leader>` c`<Esc>pa`<Esc>
+vnoremap <Leader>( c(<Space><Esc>pa<Space>)<Esc>
+vnoremap <Leader>) c(<Esc>pa)<Esc>
+vnoremap <Leader>[ c[<Space><Esc>pa<Space>]<Esc>
+vnoremap <Leader>] c[<Esc>pa]<Esc>
+vnoremap <Leader>{ c{<Space><Esc>pa<Space>}<Esc>
+vnoremap <Leader>} c{<Esc>pa}<Esc>
+
+vnoremap <Space> <Esc>^v$%
+vnoremap <Tab> <Esc>$%bmmw%wV`m
+
+function! TwiddleCase(str)
+  if a:str ==# toupper(a:str)
+    let result = tolower(a:str)
+  elseif a:str ==# tolower(a:str)
+    let result = substitute(a:str,'\(\<\w\+\>\)', '\u\1', 'g')
+  else
+    let result = toupper(a:str)
+  endif
+  return result
+endfunction
+vnoremap ~ y:call setreg('', TwiddleCase(@"), getregtype(''))<CR>gv""Pgv
+
+" Terminal mapping
+tnoremap <Esc> <C-\><C-n>

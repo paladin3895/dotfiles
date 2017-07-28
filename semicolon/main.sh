@@ -77,6 +77,7 @@ case "$command" in
     "ranger") gnome-terminal -e ranger $args 2>$error_file | tee 1>$content_file;;
     "url") sensible-browser $args 2>$error_file | tee 1>$content_file;;
     "homestead") cd ~/Projects/Vagrant/homestead && vagrant $args 2>$error_file | tee 1>$content_file;;
+    "mysql") gnome-terminal -e "mycli -uhomestead -psecret -h192.168.10.10" 2>$error_file | tee 1>$content_file;;
 
     "bc") bc_calculator $args 2>$error_file | tee 1>$content_file;;
 
