@@ -50,6 +50,8 @@ Plug 'eugen0329/vim-esearch'
 Plug 'yuratomo/w3m.vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
+Plug 'vim-scripts/vimwiki'
+
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 else
@@ -87,6 +89,7 @@ Plug 'tomasr/molokai'
 " javascript
 "" Javascript Bundle
 Plug 'jelera/vim-javascript-syntax'
+Plug 'flowtype/vim-flow'
 
 
 " php
@@ -589,8 +592,8 @@ endif
 nnoremap <Leader>sv :source $MYVIMRC<CR>
 nnoremap <Space> li<CR><Esc>O
 nnoremap <Backspace> kJJhs
-nnoremap + <C-A>
-nnoremap - <C-X>
+nnoremap <Leader>+ <C-A>
+nnoremap <Leader>- <C-X>
 
 " Surround in visual mode
 vnoremap <Leader>' c'<Esc>pa'<Esc>
