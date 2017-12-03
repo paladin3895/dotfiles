@@ -51,6 +51,7 @@ Plug 'yuratomo/w3m.vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
 Plug 'vim-scripts/vimwiki'
+Plug 'gerw/vim-latex-suite'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -251,6 +252,7 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 1
 let g:syntastic_javascript_checkers = ['eslint']
 " let g:syntastic_javascript_eslint_exe = 'eslint .'
+let g:flow#enable = 0
 
 " w3m
 nnoremap <leader>w3t :W3mTab<Space>
@@ -536,6 +538,9 @@ let g:airline#extensions#virtualenv#enabled = 1
 let g:polyglot_disabled = ['python']
 let python_highlight_all = 1
 
+" latex
+let g:tex_flavor='latex'
+
 
 "*****************************************************************************
 "*****************************************************************************
@@ -588,6 +593,7 @@ endif
 "*****************************************************************************
 "" Experiment
 "*****************************************************************************
+set timeoutlen=3000
 " Make space more useful
 nnoremap <Leader>sv :source $MYVIMRC<CR>
 nnoremap <Space> li<CR><Esc>O

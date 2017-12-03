@@ -26,6 +26,8 @@ zenity_info() {
 	zenity --text-info \
 		   --title="Information" \
 		   --filename="$content" \
+           --width=800 \
+           --height=600 \
 		   --font=monospace;
 }
 
@@ -79,8 +81,16 @@ case "$command" in
     "homestead") cd ~/Projects/Vagrant/homestead && vagrant $args 2>$error_file | tee 1>$content_file;;
     "mysql") gnome-terminal -e "mycli -uhomestead -psecret -h192.168.10.10" 2>$error_file | tee 1>$content_file;;
     "sp") spotify-cli "--$args" 2>$error_file | tee 1>$content_file;;
-
     "bc") bc_calculator $args 2>$error_file | tee 1>$content_file;;
+
+    "s2u") ~/.semicolon/utils/string.js "`xclip -sel clip -o`" -u | xclip -sel clip -i 2>$error_file | tee 1>$content_file;;
+    "s2l") ~/.semicolon/utils/string.js "`xclip -sel clip -o`" -l | xclip -sel clip -i 2>$error_file | tee 1>$content_file;;
+    "s2t") ~/.semicolon/utils/string.js "`xclip -sel clip -o`" -t | xclip -sel clip -i 2>$error_file | tee 1>$content_file;;
+    "s2s") ~/.semicolon/utils/string.js "`xclip -sel clip -o`" -s | xclip -sel clip -i 2>$error_file | tee 1>$content_file;;
+    "s2c") ~/.semicolon/utils/string.js "`xclip -sel clip -o`" -c | xclip -sel clip -i 2>$error_file | tee 1>$content_file;;
+    "s2_") ~/.semicolon/utils/string.js "`xclip -sel clip -o`" -k | xclip -sel clip -i 2>$error_file | tee 1>$content_file;;
+    "s2-") ~/.semicolon/utils/string.js "`xclip -sel clip -o`" --slug-case | xclip -sel clip -i 2>$error_file | tee 1>$content_file;;
+
 
     *) /bin/zsh -c "$input" 2>$error_file | tee 1>$content_file;;
 esac
