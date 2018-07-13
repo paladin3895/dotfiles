@@ -55,7 +55,7 @@ Plug 'SirVer/ultisnips'
 Plug 'posva/vim-vue'
 Plug 'terryma/vim-multiple-cursors'
 " Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
-Plug 'kaicataldo/material.vim'
+Plug 'mechatroner/rainbow_csv'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -324,6 +324,9 @@ let g:ctrlp_custom_ignore = {
   \ 'file': '\v\.(exe|so|dll)$',
   \ 'link': 'some_bad_symbolic_links',
   \ }
+
+" Rainbow_csv
+let g:rbql_backend_language = 'js'
 
 "*****************************************************************************
 "" Functions
