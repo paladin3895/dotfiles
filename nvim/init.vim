@@ -49,9 +49,13 @@ Plug 'rhysd/vim-grammarous'
 Plug 'eugen0329/vim-esearch'
 Plug 'yuratomo/w3m.vim'
 Plug 'flazz/vim-colorschemes'
-Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
 Plug 'vim-scripts/vimwiki'
 Plug 'gerw/vim-latex-suite'
+Plug 'SirVer/ultisnips'
+Plug 'posva/vim-vue'
+Plug 'terryma/vim-multiple-cursors'
+" Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
+Plug 'mechatroner/rainbow_csv'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -137,7 +141,7 @@ set backspace=indent,eol,start
 "" Tabs. May be overriten by autocmd rules
 set tabstop=4
 set softtabstop=4
-set shiftwidth=0
+set shiftwidth=4
 set expandtab
 set smarttab
 
@@ -251,7 +255,8 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 1
 let g:syntastic_javascript_checkers = ['eslint']
-" let g:syntastic_javascript_eslint_exe = 'eslint .'
+let g:syntastic_javascript_eslint_args=['--cache']
+let g:syntastic_javascript_eslint_exe = 'npm run lint --'
 let g:flow#enable = 0
 
 " w3m
@@ -286,7 +291,7 @@ nnoremap <silent> <F2> :NERDTreeFind<CR>
 noremap <F3> :NERDTreeToggle<CR>
 
 " grep.vim
-nnoremap <silent> <header>f :Rgrep<CR>
+nnoremap <silent> <leader>f :Rgrep<CR>
 let Grep_Default_Options = '-IR'
 let Grep_Skip_Files = '*.log *.db'
 let Grep_Skip_Dirs = '.git node_modules'
@@ -319,6 +324,9 @@ let g:ctrlp_custom_ignore = {
   \ 'file': '\v\.(exe|so|dll)$',
   \ 'link': 'some_bad_symbolic_links',
   \ }
+
+" Rainbow_csv
+let g:rbql_backend_language = 'js'
 
 "*****************************************************************************
 "" Functions
@@ -378,6 +386,11 @@ noremap <Leader>gs :Gstatus<CR>
 noremap <Leader>gb :Gblame<CR>
 noremap <Leader>gd :Gvdiff<CR>
 noremap <Leader>gr :Gremove<CR>
+
+"" gitgutter
+noremap <Leader>gh :GitGutterPreviewHunk<CR>
+noremap <Leader>gn :GitGutterNextHunk<CR>
+noremap <Leader>gp :GitGutterPrevHunk<CR>
 
 " session management
 nnoremap <leader>so :OpenSession<Space>
@@ -451,9 +464,9 @@ if has('unnamedplus')
   set clipboard=unnamed,unnamedplus
 endif
 
-noremap YY "+y<CR>
+noremap <leader>y "+y<CR>
 noremap <leader>p "+gP<CR>
-noremap XX "+x<CR>
+noremap <leader>% :let @"=@%<CR>
 
 if has('macunix')
   " pbcopy for OSX copy/paste
@@ -463,9 +476,7 @@ endif
 
 "" Buffer nav
 noremap <leader>z :bp<CR>
-noremap <leader>q :bp<CR>
 noremap <leader>x :bn<CR>
-noremap <leader>w :bn<CR>
 
 "" Close buffer
 noremap <leader>c :bd<CR>
@@ -494,24 +505,35 @@ nnoremap <Leader>o :.Gbrowse<CR>
 "" Custom configs
 "*****************************************************************************
 
+" vue
+autocmd FileType vue syntax sync fromstart
+augroup vimrc-vue
+  autocmd!
+  autocmd FileType vue set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
+augroup END
+
 " javascript
 let g:javascript_enable_domhtmlcss = 1
 
 " vim-javascript
 augroup vimrc-javascript
   autocmd!
-  autocmd FileType javascript set tabstop=2|set shiftwidth=2|set expandtab softtabstop=2
+  autocmd FileType javascript set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
 augroup END
 
 
 " php
+augroup vimrc-php
+  autocmd!
+  autocmd FileType php set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
+augroup END
 
 
 " python
 " vim-python
 augroup vimrc-python
   autocmd!
-  autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8 colorcolumn=79
+  autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=4 colorcolumn=79
       \ formatoptions+=croq softtabstop=4
       \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
 augroup END
@@ -540,7 +562,6 @@ let python_highlight_all = 1
 
 " latex
 let g:tex_flavor='latex'
-
 
 "*****************************************************************************
 "*****************************************************************************
@@ -590,6 +611,19 @@ else
   let g:airline_symbols.linenr = ''
 endif
 
+" vim-multiple-cursors
+let g:multi_cursor_use_default_mapping=0
+
+" Default mapping
+let g:multi_cursor_start_word_key      = '<C-n>'
+let g:multi_cursor_select_all_word_key = '<A-n>'
+let g:multi_cursor_start_key           = 'g<C-n>'
+let g:multi_cursor_select_all_key      = 'g<A-n>'
+let g:multi_cursor_next_key            = '<C-n>'
+let g:multi_cursor_prev_key            = '<C-p>'
+let g:multi_cursor_skip_key            = '<C-x>'
+let g:multi_cursor_quit_key            = '<Esc>'
+
 "*****************************************************************************
 "" Experiment
 "*****************************************************************************
@@ -598,8 +632,12 @@ set timeoutlen=3000
 nnoremap <Leader>sv :source $MYVIMRC<CR>
 nnoremap <Space> li<CR><Esc>O
 nnoremap <Backspace> kJJhs
+
 nnoremap <Leader>+ <C-A>
 nnoremap <Leader>- <C-X>
+
+nnoremap <Leader>> :vertical resize +10<CR>
+nnoremap <Leader>< :vertical resize -10<CR>
 
 " Surround in visual mode
 vnoremap <Leader>' c'<Esc>pa'<Esc>
