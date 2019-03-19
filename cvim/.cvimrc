@@ -14,9 +14,11 @@ let barposition = "bottom"
                   " Let me know if you need a different locale for one of the completion/search engines
 " let hintcharacters = "abc123"
 
-let searchengine sof = "https://stackoverflow.com/search?q=%" " If you leave out the '%s' at the end of the URL,
-                                                                    " your query will be appended to the link.
-                                                                    " Otherwise, your query will replace the '%s'.
+" If you leave out the '%s' at the end of the URL,
+" your query will be appended to the link.
+" Otherwise, your query will replace the '%s'.
+let searchengine sof = "https://stackoverflow.com/search?q=%"
+let searchengine laravel = "https://laravel.com/api/5.6/search.html?search=%"
 
 " This will do the same thing as above, except typing ':tabnew withbase' into to command bar
 " without any search parameters will open 'http://www.dogpile.com'
@@ -83,12 +85,12 @@ map <Leader>i :call getIP<CR>
 
 " Script hints
 echo(link) -> {{
-  alert(link.href);
+  console.log(link.href);
 }}
-map <C-f> createScriptHint(echo)
+map <Leader>f createScriptHint(echo)
 
-let configpath = '~/Projects/dotfiles/cvim/.cvimrc'
-set localconfig " Update settings via a local file (and the `:source` command) rather
+" let configpath = '~/Projects/dotfiles/cvim/.cvimrc'
+" set localconfig " Update settings via a local file (and the `:source` command) rather
                 " than the default options page in chrome
 " As long as localconfig is set in the .cvimrc file. cVim will continue to read
 " settings from there
