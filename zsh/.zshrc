@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/home/king/.oh-my-zsh
+  export ZSH=/home/king/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -51,7 +51,7 @@ ZSH_THEME="spaceship"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux web-search jsontools vi-mode wd httpie)
+plugins=(git tmux web-search jsontools httpie vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 source /etc/environment
@@ -85,5 +85,9 @@ source ~/.aliases
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-export PATH="$HOME/.phpenv/bin:$PATH"
-eval "$(phpenv init -)"
+# export PATH="$HOME/.phpenv/bin:$PATH"
+# eval "$(phpenv init -)"
+
+source /opt/ros/melodic/setup.zsh
+source ~/Projects/Code/catkin_ws/devel/setup.zsh
+unalias grv

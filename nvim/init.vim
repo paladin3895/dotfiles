@@ -28,6 +28,7 @@ call plug#begin(expand('~/.config/nvim/plugged'))
 "*****************************************************************************
 Plug 'scrooloose/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
+Plug 'tmux-plugins/vim-tmux'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
@@ -56,6 +57,9 @@ Plug 'posva/vim-vue'
 Plug 'terryma/vim-multiple-cursors'
 " Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
 Plug 'mechatroner/rainbow_csv'
+Plug 'tpope/vim-abolish'
+Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'Valloric/YouCompleteMe'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -65,7 +69,7 @@ else
 endif
 let g:make = 'gmake'
 if exists('make')
-        let g:make = 'make'
+    let g:make = 'make'
 endif
 Plug 'Shougo/vimproc.vim', {'do': g:make}
 
@@ -81,6 +85,11 @@ if v:version >= 704
   "" Snippets
   Plug 'SirVer/ultisnips'
 endif
+
+if has('nvim')
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+endif
+let g:deoplete#enable_at_startup = 1
 
 Plug 'honza/vim-snippets'
 
@@ -258,6 +267,9 @@ let g:syntastic_javascript_checkers = ['eslint']
 let g:syntastic_javascript_eslint_args=['--cache']
 let g:syntastic_javascript_eslint_exe = 'npm run lint --'
 let g:flow#enable = 0
+
+" cpp
+let g:syntastic_cpp_compiler_options = ' -std=c++11'
 
 " w3m
 nnoremap <leader>w3t :W3mTab<Space>
@@ -518,9 +530,14 @@ let g:javascript_enable_domhtmlcss = 1
 " vim-javascript
 augroup vimrc-javascript
   autocmd!
-  autocmd FileType javascript set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
+  autocmd FileType javascript set tabstop=2|set shiftwidth=2|set expandtab softtabstop=2
 augroup END
 
+" vim-typescript
+augroup vimrc-typescript
+  autocmd!
+  autocmd FileType typescript set tabstop=2|set shiftwidth=2|set expandtab softtabstop=2
+augroup END
 
 " php
 augroup vimrc-php
