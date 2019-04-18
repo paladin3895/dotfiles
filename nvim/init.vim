@@ -275,6 +275,12 @@ let g:syntastic_cpp_compiler_options = ' -std=c++11'
 nnoremap <leader>w3t :W3mTab<Space>
 nnoremap <leader>w3y :W3mTab <C-r>0
 
+"ycm
+let g:ycm_auto_trigger = 0
+let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<c-p', '<Up>']
+inoremap <Tab> <c-r>=UltiSnips#ExpandSnippet()<cr>
+
 "*****************************************************************************
 "" Abbreviations
 "*****************************************************************************
@@ -556,15 +562,15 @@ augroup vimrc-python
 augroup END
 
 " jedi-vim
-let g:jedi#popup_on_dot = 0
-let g:jedi#goto_assignments_command = "<leader>g"
-let g:jedi#goto_definitions_command = "<leader>d"
-let g:jedi#documentation_command = "K"
-let g:jedi#usages_command = "<leader>n"
-let g:jedi#rename_command = "<leader>r"
-let g:jedi#show_call_signatures = "0"
-let g:jedi#completions_command = "<C-Space>"
-let g:jedi#smart_auto_mappings = 0
+" let g:jedi#popup_on_dot = 0
+" let g:jedi#goto_assignments_command = "<leader>g"
+" let g:jedi#goto_definitions_command = "<leader>d"
+" let g:jedi#documentation_command = "K"
+" let g:jedi#usages_command = "<leader>n"
+" let g:jedi#rename_command = "<leader>r"
+" let g:jedi#show_call_signatures = "0"
+" let g:jedi#completions_command = "<C-Space>"
+" let g:jedi#smart_auto_mappings = 0
 
 " syntastic
 let g:syntastic_python_checkers=['python', 'flake8']
@@ -650,11 +656,10 @@ nnoremap <Leader>sv :source $MYVIMRC<CR>
 nnoremap <Space> li<CR><Esc>O
 nnoremap <Backspace> kJJhs
 
-nnoremap <Leader>+ <C-A>
-nnoremap <Leader>- <C-X>
-
-nnoremap <Leader>> :vertical resize +10<CR>
-nnoremap <Leader>< :vertical resize -10<CR>
+nnoremap <A-k> :resize +10<CR>
+nnoremap <A-j> :resize -10<CR>
+nnoremap <A-h> :vertical resize +10<CR>
+nnoremap <A-l> :vertical resize -10<CR>
 
 " Surround in visual mode
 vnoremap <Leader>' c'<Esc>pa'<Esc>
@@ -666,9 +671,6 @@ vnoremap <Leader>[ c[<Space><Esc>pa<Space>]<Esc>
 vnoremap <Leader>] c[<Esc>pa]<Esc>
 vnoremap <Leader>{ c{<Space><Esc>pa<Space>}<Esc>
 vnoremap <Leader>} c{<Esc>pa}<Esc>
-
-vnoremap <Space> <Esc>^v$%
-vnoremap <Tab> <Esc>$%bmmw%wV`m
 
 function! TwiddleCase(str)
   if a:str ==# toupper(a:str)
