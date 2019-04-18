@@ -644,7 +644,7 @@ let g:multi_cursor_quit_key            = '<Esc>'
 "*****************************************************************************
 "" Experiment
 "*****************************************************************************
-set timeoutlen=3000
+set timeoutlen=1000
 " Make space more useful
 nnoremap <Leader>sv :source $MYVIMRC<CR>
 nnoremap <Space> li<CR><Esc>O
