@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "commander": "^2.11.0",
+    "lodash": "^4.17.11",
     "voca": "^1.3.0"
   }
 }

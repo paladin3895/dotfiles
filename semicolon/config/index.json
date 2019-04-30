@@ -1,24 +1,24 @@
 [
   {
-    "name": "Area screenshot",
+    "name": "area screenshot",
     "command": "gnome-screenshot -a"
   },
   {
-    "name": "Window screenshot",
+    "name": "window screenshot",
     "command": "gnome-screenshot -w"
   },
   {
-    "name": "Power off",
+    "name": "power off",
     "confirm": true,
     "command": "systemctl poweroff"
   },
   {
-    "name": "Reboot",
+    "name": "reboot",
     "confirm": true,
     "command": "systemctl reboot"
   },
   {
-    "name": "Suspend",
+    "name": "suspend",
     "confirm": true,
     "command": "systemctl suspend"
   }

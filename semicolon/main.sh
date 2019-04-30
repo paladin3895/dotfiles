@@ -1,9 +1,28 @@
 #!/bin/bash
 cwd=$(echo $(dirname $0))
 
+evalmode=0
+while getopts ":e" opt; do
+  case ${opt} in
+    h ) echo "Usage: cmd [-e] [file/config]"
+      ;;
+    e ) # process option t
+      evalmode=1
+      ;;
+    \? ) echo "Usage: cmd [-e] [file/config]"
+      ;;
+  esac
+done
+
 # Use tasks.json as default, otherwise use incoming path
-config_file="${1:-"$cwd/tasks.json"}"
-tasks=$(cat $config_file)
+if [[ $evalmode == 1 ]]
+then
+  config="${2:-"[]"}"
+  tasks=$config
+else
+  config="${1:-"$cwd/config/index.json"}"
+  tasks=$(cat $config)
+fi
 
 # Pass tasks to rofi, and get the output as the selected option
 selected=$(echo $tasks | jq -j 'map(.name) | join("\n")' | rofi -dmenu -matching fuzzy -i -p "Search tasks")
@@ -15,8 +34,14 @@ if [[ $task == "" ]]; then
   exit 1
 fi
 
-task_command=$(echo $task | jq ".command")
+task_command=$(echo $task | jq -r ".command")
 confirm=$(echo $task | jq ".confirm")
+copy=$(echo $task | jq ".copy")
+
+if [[ $copy == "true" ]]; then
+  echo -n $task_command | xclip -i -sel clipboard;
+  exit;
+fi
 
 # Check whether we need confirmation to run this task
 if [[ $confirm == "true" ]]; then
