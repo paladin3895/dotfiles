@@ -1,4 +1,9 @@
 alias zshrc="source ~/.zshrc"
+alias xcopy="xclip -i -selection clipboard"
+alias xpaste="xclip -o -selection clipboard"
+alias vimf="vim \$(fzf)"
+alias mpcf="~/Projects/dotfiles/dmenu-suite/scripts/mpcmenu fzf"
+alias dlm="youtube-dl --audio-format mp3"
 
 alias :cr0="copyq_clipboard_read 0"
 alias :cr1="copyq_clipboard_read 1"

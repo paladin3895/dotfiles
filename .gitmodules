@@ -1,0 +1,3 @@
+[submodule "dmenu-suite"]
+	path = dmenu-suite
+	url = https://github.com/MaryHal/dmenu-suite.git
