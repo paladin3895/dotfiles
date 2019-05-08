@@ -60,6 +60,10 @@ Plug 'mechatroner/rainbow_csv'
 Plug 'tpope/vim-abolish'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'Valloric/YouCompleteMe'
+Plug 'NLKNguyen/pipe.vim'
+Plug 'NLKNguyen/pipe-mysql.vim'
+Plug 'Shougo/neoyank.vim'
+Plug 'justinhoward/fzf-neoyank'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -86,10 +90,10 @@ if v:version >= 704
   Plug 'SirVer/ultisnips'
 endif
 
-if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-endif
-let g:deoplete#enable_at_startup = 1
+" if has('nvim')
+"     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" endif
+" let g:deoplete#enable_at_startup = 0
 
 Plug 'honza/vim-snippets'
 
@@ -120,7 +124,7 @@ Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 "*****************************************************************************
 "" User bundles
 "*****************************************************************************
-Plug 'ctrlpvim/ctrlp.vim'
+" Plug 'ctrlpvim/ctrlp.vim'
 
 "" Include user's extra bundle
 if filereadable(expand("~/.config/nvim/local_bundles.vim"))
@@ -148,9 +152,9 @@ set binary
 set backspace=indent,eol,start
 
 "" Tabs. May be overriten by autocmd rules
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
 set expandtab
 set smarttab
 
@@ -279,7 +283,16 @@ nnoremap <leader>w3y :W3mTab <C-r>0
 let g:ycm_auto_trigger = 0
 let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<c-p', '<Up>']
-inoremap <Tab> <c-r>=UltiSnips#ExpandSnippet()<cr>
+" let g:ycm_key_list_stop_completion= ['<c-y>']
+" let g:ycm_use_ultisnips_completer = 1
+
+"pipe
+let g:pipe_no_mappings = 1
+
+" Use your key
+nmap <leader><bar>     <Plug>PipePrompt
+nmap <leader>!         <Plug>PipeLast
+nmap <leader>;         <Plug>PipeToggle
 
 "*****************************************************************************
 "" Abbreviations
@@ -328,20 +341,20 @@ else
 endif
 
 " CtrlP.vim
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
-let g:ctrlp_working_path_mode = 'ra'
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
-set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+" let g:ctrlp_map = '<c-p>'
+" let g:ctrlp_cmd = 'CtrlP'
+" let g:ctrlp_working_path_mode = 'ra'
+" set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+" set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
 
 
-let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
-let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-  \ 'file': '\v\.(exe|so|dll)$',
-  \ 'link': 'some_bad_symbolic_links',
-  \ }
+" let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
+" let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+" let g:ctrlp_custom_ignore = {
+"   \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+"   \ 'file': '\v\.(exe|so|dll)$',
+"   \ 'link': 'some_bad_symbolic_links',
+"   \ }
 
 " Rainbow_csv
 let g:rbql_backend_language = 'js'
@@ -417,15 +430,15 @@ nnoremap <leader>sd :DeleteSession<CR>
 nnoremap <leader>sc :CloseSession<CR>
 
 "" Tabs
-nnoremap <Tab> gt
-nnoremap <S-Tab> gT
+" nnoremap <Tab> gt
+" nnoremap <S-Tab> gT
 nnoremap <silent> <S-t> :tabnew<CR>
 
 "" Set working directory
 nnoremap <leader>. :lcd %:p:h<CR>
 
 "" Opens an edit command with the path of the currently edited file filled in
-noremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
+" noremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 
 "" Opens a tab edit command with the path of the currently edited file filled
 noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
@@ -451,11 +464,15 @@ endif
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <silent> <leader>b :Buffers<CR>
 nnoremap <silent> <leader>e :FZF -m<CR>
+nnoremap <silent> <leader>y :FZFNeoyank<cr>
 
 " snippets
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+inoremap <c-x><c-k> <c-x><c-k>
+" inoremap <Tab> <c-r>=UltiSnips#ExpandSnippet()<cr>
+let g:UltiSnipsExpandTrigger = "<c-tab>"
+let g:UltiSnipsListSnippets = "<c-s-tab>"
+let g:UltiSnipsJumpForwardTrigger = "<c-j>"
+let g:UltiSnipsJumpBackwardTrigger = "<c-k>"
 let g:UltiSnipsEditSplit="vertical"
 
 " syntastic
@@ -482,8 +499,9 @@ if has('unnamedplus')
   set clipboard=unnamed,unnamedplus
 endif
 
-noremap <leader>y "+y<CR>
-noremap <leader>p "+gP<CR>
+" copy and paste clipboard registry to vim default reg
+" noremap <leader>y "+y<CR>
+" noremap <leader>p "+gP<CR>
 noremap <leader>% :let @"=@%<CR>
 
 if has('macunix')
@@ -524,11 +542,11 @@ nnoremap <Leader>o :.Gbrowse<CR>
 "*****************************************************************************
 
 " vue
-autocmd FileType vue syntax sync fromstart
-augroup vimrc-vue
-  autocmd!
-  autocmd FileType vue set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
-augroup END
+" autocmd FileType vue syntax sync fromstart
+" augroup vimrc-vue
+"   autocmd!
+"   autocmd FileType vue set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
+" augroup END
 
 " javascript
 let g:javascript_enable_domhtmlcss = 1
@@ -652,7 +670,7 @@ let g:multi_cursor_quit_key            = '<Esc>'
 "*****************************************************************************
 set timeoutlen=1000
 " Make space more useful
-nnoremap <Leader>sv :source $MYVIMRC<CR>
+nnoremap <Leader>R :source $MYVIMRC<CR>
 nnoremap <Space> li<CR><Esc>O
 nnoremap <Backspace> kJJhs
 
