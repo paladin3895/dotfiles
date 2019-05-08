@@ -37,6 +37,7 @@ fi
 task_command=$(echo $task | jq -r ".command")
 confirm=$(echo $task | jq ".confirm")
 copy=$(echo $task | jq ".copy")
+recursive=$(echo $task | jq ".recursive")
 
 if [[ $copy == "true" ]]; then
   echo -n $task_command | xclip -i -sel clipboard;
@@ -47,7 +48,12 @@ fi
 if [[ $confirm == "true" ]]; then
   # Chain the confirm command before executing the selected command
   confirm_script="$cwd/confirm.sh 'Confirm $selected?'"
-  eval "$confirm_script && \"$task_command\" > /dev/null &"
+  eval "cd $cwd && $confirm_script && $task_command > /dev/null &"
+
+elif [[ $recursive == "true" ]]; then
+  eval "cd $cwd && $task_command > /dev/null &"
+
 else
-  eval "\"$task_command\" > /dev/null &"
+  #statements
+  eval "cd $cwd && $task_command > /dev/null &"
 fi

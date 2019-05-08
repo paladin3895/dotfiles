@@ -1,5 +1,10 @@
 [
   {
+    "name": "music player",
+    "recursive": true,
+    "command": "mpcmenu rofi --dmenu"
+  },
+  {
     "name": "area screenshot",
     "command": "gnome-screenshot -a"
   },
