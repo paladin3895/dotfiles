@@ -56,12 +56,12 @@ Plug 'SirVer/ultisnips'
 Plug 'posva/vim-vue'
 Plug 'terryma/vim-multiple-cursors'
 " Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
+Plug 'vim-scripts/dbext.vim'
 Plug 'mechatroner/rainbow_csv'
 Plug 'tpope/vim-abolish'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'Valloric/YouCompleteMe'
 Plug 'NLKNguyen/pipe.vim'
-Plug 'NLKNguyen/pipe-mysql.vim'
 Plug 'Shougo/neoyank.vim'
 Plug 'justinhoward/fzf-neoyank'
 
@@ -704,3 +704,17 @@ vnoremap ~ y:call setreg('', TwiddleCase(@"), getregtype(''))<CR>gv""Pgv
 
 " Terminal mapping
 tnoremap <Esc> <C-\><C-n>
+
+"*****************************************************************************
+"" Database
+"*****************************************************************************
+source ~/.config/nvim/db.vim
+nnoremap <leader>;? :DBSetOption profile=
+nnoremap <leader>;x :DBExecSQLUnderCursor<CR>
+vnoremap <leader>;x :DBExecVisualSQL<CR>
+nnoremap <leader>;c :DBResultsClose<CR>
+nnoremap <leader>;o :DBResultsOpen<CR>
+nnoremap <leader>;t :DBDescribeTable<CR>
+nnoremap <leader>;d :DBListTable<CR>
+nnoremap <leader>;s :DBSelectFromTableWithWhere<CR>
+nnoremap <leader>;* :DBListColumn<CR>
