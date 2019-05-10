@@ -20,6 +20,8 @@ if !filereadable(vimplug_exists)
   autocmd VimEnter * PlugInstall
 endif
 
+
+
 " Required:
 call plug#begin(expand('~/.config/nvim/plugged'))
 
@@ -52,7 +54,6 @@ Plug 'yuratomo/w3m.vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'vim-scripts/vimwiki'
 Plug 'gerw/vim-latex-suite'
-Plug 'SirVer/ultisnips'
 Plug 'posva/vim-vue'
 Plug 'terryma/vim-multiple-cursors'
 " Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
@@ -64,6 +65,12 @@ Plug 'Valloric/YouCompleteMe'
 Plug 'NLKNguyen/pipe.vim'
 Plug 'Shougo/neoyank.vim'
 Plug 'justinhoward/fzf-neoyank'
+
+" Plug 'SirVer/ultisnips'
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+Plug 'garbas/vim-snipmate'
+Plug 'honza/vim-snippets'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -87,18 +94,16 @@ endif
 
 if v:version >= 704
   "" Snippets
-  Plug 'SirVer/ultisnips'
+  " Plug 'SirVer/ultisnips'
 endif
 
-let g:UltiSnipsSnippetsDir = $HOME.'/.config/nvim/ultisnippets'
-let g:UltiSnipsSnippetDirectories = [$HOME.'/.config/nvim/ultisnippets']
+" let g:UltiSnipsSnippetsDir = $HOME.'/.config/nvim/ultisnippets'
+" let g:UltiSnipsSnippetDirectories = [$HOME.'/.config/nvim/ultisnippets']
 
 " if has('nvim')
 "     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " endif
 " let g:deoplete#enable_at_startup = 0
-
-Plug 'honza/vim-snippets'
 
 "" Color
 Plug 'tomasr/molokai'
@@ -288,12 +293,22 @@ let g:syntastic_cpp_compiler_options = ' -std=c++11'
 nnoremap <leader>w3t :W3mTab<Space>
 nnoremap <leader>w3y :W3mTab <C-r>0
 
-"ycm
+" ycm
 let g:ycm_auto_trigger = 0
 let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<c-p', '<Up>']
 " let g:ycm_key_list_stop_completion= ['<c-y>']
 " let g:ycm_use_ultisnips_completer = 1
+
+" UltiSnips
+" let g:UltiSnipsExpandTrigger = "<tab>"
+" inoremap <c-x><c-k> <c-x><c-k>
+" inoremap <Tab> <c-r>=UltiSnips#ExpandSnippet()<cr>
+" let g:UltiSnipsExpandTrigger = "<c-tab>"
+" let g:UltiSnipsListSnippets = "<c-s-tab>"
+" let g:UltiSnipsJumpForwardTrigger = "<c-j>"
+" let g:UltiSnipsJumpBackwardTrigger = "<c-k>"
+" let g:UltiSnipsEditSplit="vertical"
 
 "*****************************************************************************
 "" Abbreviations
@@ -466,14 +481,6 @@ cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <silent> <leader>b :Buffers<CR>
 nnoremap <silent> <leader>e :FZF -m<CR>
 nnoremap <silent> <leader>y :FZFNeoyank<cr>
-
-inoremap <c-x><c-k> <c-x><c-k>
-" inoremap <Tab> <c-r>=UltiSnips#ExpandSnippet()<cr>
-let g:UltiSnipsExpandTrigger = "<c-tab>"
-let g:UltiSnipsListSnippets = "<c-s-tab>"
-let g:UltiSnipsJumpForwardTrigger = "<c-j>"
-let g:UltiSnipsJumpBackwardTrigger = "<c-k>"
-let g:UltiSnipsEditSplit="vertical"
 
 " syntastic
 let g:syntastic_always_populate_loc_list=1
