@@ -90,6 +90,9 @@ if v:version >= 704
   Plug 'SirVer/ultisnips'
 endif
 
+let g:UltiSnipsSnippetsDir = $HOME.'/.config/nvim/ultisnippets'
+let g:UltiSnipsSnippetDirectories = [$HOME.'/.config/nvim/ultisnippets']
+
 " if has('nvim')
 "     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " endif
@@ -189,6 +192,13 @@ let g:session_autoload = "no"
 let g:session_autosave = "no"
 let g:session_command_aliases = 1
 
+"pipe
+let g:pipe_no_mappings = 1
+
+" Use your key
+noremap <leader><bar>x :Pipe 
+noremap <leader><bar>c :PipeToggleWindow<CR>
+
 "*****************************************************************************
 "" Visual Settings
 "*****************************************************************************
@@ -275,7 +285,6 @@ let g:flow#enable = 0
 " cpp
 let g:syntastic_cpp_compiler_options = ' -std=c++11'
 
-" w3m
 nnoremap <leader>w3t :W3mTab<Space>
 nnoremap <leader>w3y :W3mTab <C-r>0
 
@@ -285,14 +294,6 @@ let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<c-p', '<Up>']
 " let g:ycm_key_list_stop_completion= ['<c-y>']
 " let g:ycm_use_ultisnips_completer = 1
-
-"pipe
-let g:pipe_no_mappings = 1
-
-" Use your key
-nmap <leader><bar>     <Plug>PipePrompt
-nmap <leader>!         <Plug>PipeLast
-nmap <leader>;         <Plug>PipeToggle
 
 "*****************************************************************************
 "" Abbreviations
@@ -432,7 +433,7 @@ nnoremap <leader>sc :CloseSession<CR>
 "" Tabs
 " nnoremap <Tab> gt
 " nnoremap <S-Tab> gT
-nnoremap <silent> <S-t> :tabnew<CR>
+" nnoremap <silent> <S-t> :tabnew<CR>
 
 "" Set working directory
 nnoremap <leader>. :lcd %:p:h<CR>
@@ -466,7 +467,6 @@ nnoremap <silent> <leader>b :Buffers<CR>
 nnoremap <silent> <leader>e :FZF -m<CR>
 nnoremap <silent> <leader>y :FZFNeoyank<cr>
 
-" snippets
 inoremap <c-x><c-k> <c-x><c-k>
 " inoremap <Tab> <c-r>=UltiSnips#ExpandSnippet()<cr>
 let g:UltiSnipsExpandTrigger = "<c-tab>"

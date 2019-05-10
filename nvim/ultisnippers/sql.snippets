@@ -1,0 +1,21 @@
+snippet s*w
+select * from ${1:table} where ${2:col} = ${3:value}
+endsnippet
+snippet s*wl
+select * from ${1:table} where ${2:col} = ${3:value} limit ${4:1}
+endsnippet
+snippet sw
+select (${1:col}) from ${2:table} where ${3:col} = ${4:value}
+endsnippet
+snippet swl
+select (${1:col}) from ${2:table} where ${3:col} = ${4:value} limit ${5:1}
+endsnippet
+snippet update
+update ${1:table} set (${2:col} = ${3:value}) where ${4:col} = ${5:value}
+endsnippet
+snippet insert
+insert into ${1:table} (${2:col}) values (${3:values})
+endsnippet
+snippet upsert
+insert into ${1:table} (${2:col}) values (${3:values}) on duplicate key update (${4:expr})
+endsnippet
