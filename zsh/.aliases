@@ -3,7 +3,12 @@ alias xcopy="xclip -i -selection clipboard"
 alias xpaste="xclip -o -selection clipboard"
 alias vimf="vim \$(fzf)"
 alias mpcf="~/Projects/dotfiles/dmenu-suite/scripts/mpcmenu fzf"
-alias dlm="youtube-dl --audio-format mp3"
+
+alias dlm='youtube-dl --audio-format mp3'
+
+alias line2jq="jq -R -s 'split(\"\n\") | map(select(. != \"\"))'"
+alias grid2jq="line2jq | jq 'map(split(\"\\\s+\"; \"\"))'"
+alias jq2line="jq -r 'join(\"\n\")'"
 
 alias :cr0="copyq_clipboard_read 0"
 alias :cr1="copyq_clipboard_read 1"
