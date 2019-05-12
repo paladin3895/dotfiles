@@ -5,6 +5,10 @@
     "command": "mpcmenu rofi --dmenu"
   },
   {
+    "name": "download music",
+    "command": "xpaste | dlm; notify-send \"MPD Database Updated\"; mpc -q update"
+  },
+  {
     "name": "area screenshot",
     "command": "gnome-screenshot -a"
   },
