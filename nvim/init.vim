@@ -696,17 +696,6 @@ vnoremap <Leader>[ c[<Space><Esc>pa<Space>]<Esc>
 vnoremap <Leader>] c[<Esc>pa]<Esc>
 vnoremap <Leader>{ c{<Space><Esc>pa<Space>}<Esc>
 vnoremap <Leader>} c{<Esc>pa}<Esc>
-
-function! TwiddleCase(str)
-  if a:str ==# toupper(a:str)
-    let result = tolower(a:str)
-  elseif a:str ==# tolower(a:str)
-    let result = substitute(a:str,'\(\<\w\+\>\)', '\u\1', 'g')
-  else
-    let result = toupper(a:str)
-  endif
-  return result
-endfunction
 vnoremap ~ y:call setreg('', TwiddleCase(@"), getregtype(''))<CR>gv""Pgv
 
 " Terminal mapping
@@ -728,3 +717,22 @@ nnoremap <leader>;t :DBDescribeTable<CR>
 nnoremap <leader>;d :DBListTable<CR>
 nnoremap <leader>;s :DBSelectFromTableWithWhere<CR>
 nnoremap <leader>;* :DBListColumn<CR>
+vnoremap <leader>;v :call ViewTable()<CR>
+
+"*****************************************************************************
+"" Functions
+"*****************************************************************************
+function! TwiddleCase(str)
+  if a:str ==# toupper(a:str)
+    let result = tolower(a:str)
+  elseif a:str ==# tolower(a:str)
+    let result = substitute(a:str,'\(\<\w\+\>\)', '\u\1', 'g')
+  else
+    let result = toupper(a:str)
+  endif
+  return result
+endfunction
+
+function! ViewTable() range
+  echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -c "{delimiter:\"<tab>\"}" -o table | bcat')
+endfunction
