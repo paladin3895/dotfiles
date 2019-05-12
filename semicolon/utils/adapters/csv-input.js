@@ -7,7 +7,7 @@ function handle(chain, _, rawConfig) {
       const hasHeader = _.get(config, 'header', true);
       const delimiter = _.get(config, 'delimiter', ',');
 
-      const csv = csv2json(input, delimiter);
+      const csv = csv2json(_.trim(input), delimiter);
 
       if (!hasHeader) {
         return csv;
