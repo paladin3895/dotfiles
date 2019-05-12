@@ -716,6 +716,9 @@ tnoremap <Esc> <C-\><C-n>
 "" Database
 "*****************************************************************************
 source ~/.config/nvim/db.vim
+
+let g:dbext_default_MYSQL_extra = '--batch --raw'
+
 nnoremap <leader>;? :DBSetOption profile=
 nnoremap <leader>;x :DBExecSQLUnderCursor<CR>
 vnoremap <leader>;x :DBExecVisualSQL<CR>
