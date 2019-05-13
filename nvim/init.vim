@@ -701,6 +701,9 @@ vnoremap ~ y:call setreg('', TwiddleCase(@"), getregtype(''))<CR>gv""Pgv
 " Terminal mapping
 tnoremap <Esc> <C-\><C-n>
 
+" Utilities
+vnoremap <leader># :call ExecuteScript()<CR>
+
 "*****************************************************************************
 "" Database
 "*****************************************************************************
@@ -735,4 +738,21 @@ endfunction
 
 function! ViewTable() range
   echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -c "{delimiter:\"<tab>\"}" -o table | bcat')
+endfunction
+
+function! CalculateResult() range
+  echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| bc -i -q')
+endfunction
+
+function! ExecuteScript() range
+
+  if &ft == 'php'
+    let expression = shellescape(join((getline(a:firstline, a:lastline)), "\n"))
+    let result = system('echo '.expression.'| xargs -i php -r "{}"')
+  else
+    let expression = shellescape(join(map(getline(a:firstline, a:lastline), '"console.log(" . v:val . ")"'), "\n"))
+    let result = system('echo '.expression.'| xargs -i node -e "{}"')
+  endif
+
+  echom result
 endfunction
