@@ -49,7 +49,6 @@ program
   })
   .parse(process.argv);
 
-
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', (data) => {
@@ -58,9 +57,12 @@ process.stdin.on('data', (data) => {
   try {
     let chain = _.chain(data);
     chain = getInputHandler(program)(chain, _, opts.config);
+    // chain = chain.tap(console.log)
 
+    // console.log(`chain${expression}`);
     chain = eval(`chain${expression}`);
 
+    // chain = chain.tap(console.log)
     chain = getOutputHanlder(program)(chain, _, opts.config);
 
     if (program.debug) {

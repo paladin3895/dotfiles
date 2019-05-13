@@ -701,9 +701,6 @@ vnoremap ~ y:call setreg('', TwiddleCase(@"), getregtype(''))<CR>gv""Pgv
 " Terminal mapping
 tnoremap <Esc> <C-\><C-n>
 
-" Utilities
-vnoremap <leader># :call ExecuteScript()<CR>
-
 "*****************************************************************************
 "" Database
 "*****************************************************************************
@@ -721,6 +718,8 @@ nnoremap <leader>;d :DBListTable<CR>
 nnoremap <leader>;s :DBSelectFromTableWithWhere<CR>
 nnoremap <leader>;* :DBListColumn<CR>
 vnoremap <leader>;v :call ViewTable()<CR>
+vnoremap <leader>;_ :call Lodash()<CR>
+vnoremap <leader>;; :call ExecuteScript()<CR>
 
 "*****************************************************************************
 "" Functions
@@ -737,21 +736,29 @@ function! TwiddleCase(str)
 endfunction
 
 function! ViewTable() range
-  echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -c "{delimiter:\"<tab>\"}" -o table | bcat')
-endfunction
-
-function! CalculateResult() range
-  echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| bc -i -q')
+  echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -o table | bcat')
 endfunction
 
 function! ExecuteScript() range
-
-  if &ft == 'php'
-    let expression = shellescape(join((getline(a:firstline, a:lastline)), "\n"))
-    let result = system('echo '.expression.'| xargs -i php -r "{}"')
+  if &ft == 'javascript'
+    execute "'<,'>QuickRun javascript"
+  elseif &ft == 'php'
+    execute "'<,'>QuickRun php"
   else
-    let expression = shellescape(join(map(getline(a:firstline, a:lastline), '"console.log(" . v:val . ")"'), "\n"))
-    let result = system('echo '.expression.'| xargs -i node -e "{}"')
+    execute "'<,'>QuickRun zsh"
+  endif
+endfunction
+
+function! Lodash() range
+
+  let data = shellescape(join(getline(a:firstline, a:lastline), "\n"))
+  call inputsave()
+  let expression = input('Enter chain command: ')
+  call inputrestore()
+
+  let result = ''
+  if expression
+    result = system('echo '.input."| _.chain -i line '".expression."'")
   endif
 
   echom result

@@ -1,8 +1,9 @@
 const os = require('os');
 
-function handle(chain) {
+function handle(chain, _) {
   return chain
-    .join(data, os.EOL)
+    .thru(data => _.isArray(data) ? data : [data])
+    .join(os.EOL)
 }
 
 module.exports = handle;
