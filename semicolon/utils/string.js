@@ -8,28 +8,28 @@ var program = require('commander');
 var V = require('voca');
 
 program
-  .version('0.1.0')
-  .arguments('<value>')
-  .option('-u, --upper-case', 'Change string to upper-case')
-  .option('-l, --lower-case', 'Change string to lower-case')
-  .option('-t, --title-case', 'Change string to title-case')
-  .option('-s, --sentence-case', 'Change string to sentence-case')
-  .option('-c, --camel-case', 'Change string to camel-case')
-  .option('-k, --snake-case', 'Change string to snake-case')
-  .option('--slug-case', 'Change string to slug-case')
-  .action(function (value) {
-    let result = String(value);
-    if (program.upperCase) result = result.toUpperCase();
-    if (program.lowerCase) result = result.toLowerCase();
-    if (program.titleCase) result = V.titleCase(result);
-    if (program.camelCase) result = V.camelCase(result);
-    if (program.snakeCase) result = V.snakeCase(result);
-    if (program.slugCase) result = V.slugify(result);
-    if (program.sentenceCase) result = toSentenceCase(result);
+    .version('0.1.0')
+    .arguments('<value>')
+    .option('-u, --upper-case', 'Change string to upper-case')
+    .option('-l, --lower-case', 'Change string to lower-case')
+    .option('-t, --title-case', 'Change string to title-case')
+    .option('-s, --sentence-case', 'Change string to sentence-case')
+    .option('-c, --camel-case', 'Change string to camel-case')
+    .option('-k, --snake-case', 'Change string to snake-case')
+    .option('--slug-case', 'Change string to slug-case')
+    .action(function (value) {
+        let result = String(value);
+        if (program.upperCase) result = result.toUpperCase();
+        if (program.lowerCase) result = result.toLowerCase();
+        if (program.titleCase) result = V.titleCase(result);
+        if (program.camelCase) result = V.camelCase(result);
+        if (program.snakeCase) result = V.snakeCase(result);
+        if (program.slugCase) result = V.slugify(result);
+        if (program.sentenceCase) result = toSentenceCase(result);
 
-    console.log(result);
-  })
-  .parse(process.argv);
+        console.log(result);
+    })
+    .parse(process.argv);
 
 function toSentenceCase(str) {
 
