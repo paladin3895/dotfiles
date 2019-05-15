@@ -93,4 +93,15 @@ map <Leader>f createScriptHint(echo)
 " set localconfig " Update settings via a local file (and the `:source` command) rather
                 " than the default options page in chrome
 " As long as localconfig is set in the .cvimrc file. cVim will continue to read
-" settings from there
+
+unmap x
+unmap xh
+unmap xl
+unmap x0
+unmap x$
+map xx  :call closeTab<CR>
+map xh	:call closeTabLeft<CR>
+map xl	:call closeTabRight<CR>
+map x0	:call closeTabsToLeft<CR>
+map x^	:call closeTabsToLeft<CR>
+map x$	:call closeTabsToRight<CR>
