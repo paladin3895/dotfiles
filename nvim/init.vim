@@ -71,6 +71,7 @@ Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
 Plug 'honza/vim-snippets'
+Plug 'honza/vim-snippets'
 Plug 'thinca/vim-quickrun'
 
 if isdirectory('/usr/local/opt/fzf')
@@ -393,7 +394,7 @@ endif
 "" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
 augroup vimrc-sync-fromstart
   autocmd!
-  autocmd BufEnter * :syntax sync maxlines=200
+  autocmd BufEnter * :syntax sync maxlines=1000
 augroup END
 
 "" Remember cursor position
@@ -422,8 +423,8 @@ set autoread
 "*****************************************************************************
 
 "" Split
-noremap <Leader>h :<C-u>split<CR>
-noremap <Leader>v :<C-u>vsplit<CR>
+noremap <Leader>- :<C-u>split<CR>
+noremap <Leader>_ :<C-u>vsplit<CR>
 
 "" Git
 noremap <Leader>ga :Gwrite<CR>
@@ -550,11 +551,11 @@ nnoremap <Leader>o :.Gbrowse<CR>
 "*****************************************************************************
 
 " vue
-" autocmd FileType vue syntax sync fromstart
-" augroup vimrc-vue
-"   autocmd!
-"   autocmd FileType vue set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
-" augroup END
+autocmd FileType vue syntax sync fromstart
+augroup vimrc-vue
+  autocmd!
+  autocmd FileType vue set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
+augroup END
 
 " javascript
 let g:javascript_enable_domhtmlcss = 1
@@ -562,7 +563,7 @@ let g:javascript_enable_domhtmlcss = 1
 " vim-javascript
 augroup vimrc-javascript
   autocmd!
-  autocmd FileType javascript set tabstop=2|set shiftwidth=2|set expandtab softtabstop=2
+  autocmd FileType javascript set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
 augroup END
 
 " vim-typescript
@@ -702,6 +703,9 @@ vnoremap ~ y:call setreg('', TwiddleCase(@"), getregtype(''))<CR>gv""Pgv
 " Terminal mapping
 tnoremap <Esc> <C-\><C-n>
 
+" Utilities
+vnoremap <leader># :call ExecuteScript()<CR>
+
 "*****************************************************************************
 "" Database
 "*****************************************************************************
@@ -717,6 +721,8 @@ nnoremap <leader>;o :DBResultsOpen<CR>
 nnoremap <leader>;t :DBDescribeTable<CR>
 nnoremap <leader>;d :DBListTable<CR>
 nnoremap <leader>;s :DBSelectFromTableWithWhere<CR>
+nnoremap <leader>;u :GenerateUpdate<CR>
+nnoremap <leader>;i :GenerateCreate<CR>
 nnoremap <leader>;* :DBListColumn<CR>
 vnoremap <leader>;v :call ViewTable()<CR>
 vnoremap <leader>;_ :call Lodash()<CR>
@@ -738,6 +744,18 @@ endfunction
 
 function! ViewTable() range
   echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -o table | bcat')
+endfunction
+
+function! GenerateUpdate() range
+  echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -o update | xcopy')
+endfunction
+
+function! GenerateCreate() range
+  echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -o create | xcopy')
+endfunction
+
+function! GenerateUpsert() range
+  echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -o upsert | xcopy')
 endfunction
 
 function! ExecuteScript() range
