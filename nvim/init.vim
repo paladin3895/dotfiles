@@ -546,6 +546,9 @@ vnoremap K :m '<-2<CR>gv=gv
 "" Open current line on GitHub
 nnoremap <Leader>o :.Gbrowse<CR>
 
+"" Quickly change filetype
+nnoremap <leader>? :setfiletype 
+
 "*****************************************************************************
 "" Custom configs
 "*****************************************************************************
@@ -721,9 +724,9 @@ nnoremap <leader>;o :DBResultsOpen<CR>
 nnoremap <leader>;t :DBDescribeTable<CR>
 nnoremap <leader>;d :DBListTable<CR>
 nnoremap <leader>;s :DBSelectFromTableWithWhere<CR>
-nnoremap <leader>;u :GenerateUpdate<CR>
-nnoremap <leader>;i :GenerateCreate<CR>
 nnoremap <leader>;* :DBListColumn<CR>
+vnoremap <leader>;u :call GenerateUpdate()<CR>
+vnoremap <leader>;i :call GenerateCreate()<CR>
 vnoremap <leader>;v :call ViewTable()<CR>
 vnoremap <leader>;_ :call Lodash()<CR>
 vnoremap <leader>;; :call ExecuteScript()<CR>
@@ -747,15 +750,18 @@ function! ViewTable() range
 endfunction
 
 function! GenerateUpdate() range
-  echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -o update | xcopy')
+  let expression = 'echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -o update'
+  call setreg('0', system(expression))
 endfunction
 
 function! GenerateCreate() range
-  echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -o create | xcopy')
+  let expression = 'echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -o create'
+  call setreg('0', system(expression))
 endfunction
 
 function! GenerateUpsert() range
-  echo system('echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -o upsert | xcopy')
+  let expression = 'echo '.shellescape(join(getline(a:firstline, a:lastline), "\n")).'| _.chain -i csv -o upsert'
+  call setreg('0', system(expression))
 endfunction
 
 function! ExecuteScript() range
