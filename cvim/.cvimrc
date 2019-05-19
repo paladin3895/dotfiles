@@ -18,7 +18,7 @@ let barposition = "bottom"
 " your query will be appended to the link.
 " Otherwise, your query will replace the '%s'.
 let searchengine sof = "https://stackoverflow.com/search?q=%"
-let searchengine laravel = "https://laravel.com/api/5.6/search.html?search=%"
+let searchengine lrv = "https://laravel.com/api/5.7/search.html?search=%"
 
 " This will do the same thing as above, except typing ':tabnew withbase' into to command bar
 " without any search parameters will open 'http://www.dogpile.com'
