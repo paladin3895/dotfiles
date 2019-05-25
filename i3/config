@@ -29,6 +29,9 @@ font pango:monospace 10
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+# Startup processes
+exec --no-startup-id nitrogen --restore
+
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
 
