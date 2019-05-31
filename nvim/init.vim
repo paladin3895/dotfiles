@@ -167,6 +167,9 @@ call plug#end()
 " Required:
 filetype plugin indent on
 
+" vim-table
+let g:table_mode_corner_corner='+'
+let g:table_mode_header_fillchar='-'
 
 "*****************************************************************************
 "" Basic Setup
@@ -544,7 +547,7 @@ noremap <leader>z :bp<CR>
 noremap <leader>x :bn<CR>
 
 "" Close buffer
-noremap  <leader>c :bd!<CR>
+noremap <leader>c :bd!<CR>
 
 "" Clean search (highlight)
 nnoremap <silent> <leader><space> :noh<cr>
