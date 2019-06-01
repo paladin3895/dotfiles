@@ -69,7 +69,7 @@ Plug 'Valloric/YouCompleteMe'
 Plug 'Shougo/neoyank.vim'
 Plug 'justinhoward/fzf-neoyank'
 Plug 'dhruvasagar/vim-table-mode'
-
+Plug 'ap/vim-css-color'
 
 " Plug 'SirVer/ultisnips'
 Plug 'MarcWeber/vim-addon-mw-utils'
@@ -77,6 +77,7 @@ Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
 Plug 'honza/vim-snippets'
 Plug 'thinca/vim-quickrun'
+Plug 'easymotion/vim-easymotion'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -186,9 +187,9 @@ set binary
 set backspace=indent,eol,start
 
 "" Tabs. May be overriten by autocmd rules
-set tabstop=2
-set softtabstop=2
-set shiftwidth=2
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
 set expandtab
 set smarttab
 
@@ -444,6 +445,9 @@ set autoread
 "*****************************************************************************
 "" Mappings
 "*****************************************************************************
+"
+" EasyMotion
+map <Leader> <Plug>(easymotion-prefix)
 
 "" Split
 noremap <Leader>- :<C-u>split<CR>
