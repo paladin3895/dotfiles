@@ -1,0 +1,84 @@
+(cg:define-guesser apt-install
+    ;; On Ubuntu, Bash suggests you to `apt install XXX` when the command
+    ;; you just run was not found inside PATH.
+    ;; This guesser looks looks for that suggestion.
+    ("(sudo apt install [^ ]+)" (apt-cmd))
+  (format NIL "~a " apt-cmd))
+
+(cg:define-guesser br
+    ;; Poor's urlview!
+    ;; https://gist.github.com/gruber/249502
+    ("((?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’])))"
+     (url))
+  (format NIL "br '~a' " url))
+
+(cg:define-guesser git-b-git-delete
+    ;; How many times have you run `git branch -v` looking for _gone_ branches,
+    ;; and then run `git branch -d` to clean up your local repo?
+    ;;
+    ;; * master    b8f0d88 [behind 1] Merge pull request #3 from iamFIREcracker/add-verbose-flag
+    ;;   travis-ci c3f7128 [gone] Download Linux binary when on WSL
+    ;;
+    ("^\\*?\\s+([^ ]+)\\s+([a-f0-9]{7,9})\\s(\\[gone]\\s*.*)" (branch commit rest))
+  (format NIL "git branch -d '~a' # ~a -> ~a" branch commit rest))
+
+(cg:define-guesser git-b-git-checkout
+    ;; Parses `git branch -v`'s output and suggests you to switch to one of the
+    ;; local branches
+    ("^\\*?\\s+([^ ]+)\\s+([a-f0-9]{7,10})\\s(.*)" (branch commit rest))
+  (format NIL "git checkout '~a' # ~a -> ~a" branch commit rest))
+
+(cg:define-guesser git-branch-delete
+    ;; Sometimes, when deleting a branch, `git` refuses to delete it and spits
+    ;; out a lot of text suggesting to use `git branch -D ..` instead.
+    ;;
+    ;; error: The branch 'travis-ci' is not fully merged.
+    ;; If you are sure you want to delete it, run 'git branch -D travis-ci'.
+    ("'(git branch -D [^ ]+)'" (git-cmd))
+  (format NIL "~a" git-cmd))
+
+(cg:define-guesser git-pull-git-branch-set-upstream
+    ;; There is no tracking information for the current branch.
+    ;; Please specify which branch you want to merge with.
+    ;; See git-pull(1) for details.
+    ;;
+    ;;     git pull <remote> <branch>
+    ;;
+    ;; If you wish to set tracking information for this branch you can do so with:
+    ;;
+    ;;     git branch --set-upstream-to=origin/<branch> travis-ci
+    ;;
+    ("(git branch --set-upstream-to=origin/)<branch> ([^'\" ]+)" (git-cmd branch))
+  (format NIL "~a~a" git-cmd branch))
+
+(cg:define-guesser git-l-git-show
+    ("^([a-f0-9]{7,10}) (.*)" (commit rest))
+  (format NIL "git show '~a' # ~a" commit rest))
+
+(cg:define-guesser git-log-git-show
+    ("^commit ([a-f0-9]{40})" (commit))
+  (format NIL "git show '~a'" commit))
+
+(cg:define-guesser git-status-staged-git-reset
+    ("M. (.*)" (file))
+  (format NIL "git reset '~a'" file))
+
+(cg:define-guesser git-status-untracked-git-add
+    ("\\?\\? (.*)" (file))
+  (format NIL "git add '~a'" file))
+
+(cg:define-guesser kill-kill9
+    ;; Have you have run `kill $PID` only to discover the process got stuck
+    ;; somewhere, and the only way to terminate it was to `kill -9` it?  Well
+    ;; this one looks for `kill $PID` lines, and suggests `kill -9 $PID`
+    ;; instead.
+    ("kill ([0-9]+)" (pid))
+  (format NIL "kill -9 '~a'" pid))
+
+(cg:define-guesser ports-kill
+    ("^(\\w+)\\s+([0-9]+)\\s+(\\w+)\\s+(\\w+)" (command pid user fd))
+  (format NIL "kill '~a' # FD ~a locked by ~a (~a)" pid fd command user))
+
+(cg:define-guesser psg-kill
+    ("^([0-9]+)\\s+(.+)" (pid command))
+  (format NIL "kill '~a' # ~a " pid command))
