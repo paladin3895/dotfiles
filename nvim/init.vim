@@ -78,6 +78,7 @@ Plug 'garbas/vim-snipmate'
 Plug 'honza/vim-snippets'
 Plug 'thinca/vim-quickrun'
 Plug 'easymotion/vim-easymotion'
+Plug 'dhruvasagar/vim-table-mode'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -223,6 +224,9 @@ let g:session_directory = "~/.config/nvim/session"
 let g:session_autoload = "no"
 let g:session_autosave = "no"
 let g:session_command_aliases = 1
+
+" EasyMotion
+map <Leader> <Plug>(easymotion-prefix)
 
 "pipe
 " let g:pipe_no_mappings = 1
@@ -593,7 +597,7 @@ let g:javascript_enable_domhtmlcss = 1
 " vim-javascript
 augroup vimrc-javascript
   autocmd!
-  autocmd FileType javascript set tabstop=2|set shiftwidth=2|set expandtab softtabstop=2
+  autocmd FileType javascript set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
 augroup END
 
 " vim-typescript
@@ -711,6 +715,7 @@ set timeoutlen=1000
 " Make space more useful
 nnoremap <Leader>R :source $MYVIMRC<CR>
 nnoremap <Space> li<CR><Esc>O
+nnoremap <Backspace> kJJhs
 
 nnoremap <A-k> :resize +10<CR>
 nnoremap <A-j> :resize -10<CR>
@@ -732,6 +737,9 @@ vnoremap ~ y:call setreg('', TwiddleCase(@"), getregtype(''))<CR>gv""Pgv
 " Terminal mapping
 tnoremap <Esc> <C-\><C-n>
 
+" Utilities
+vnoremap <leader>bc "ey:call CalcBC()<CR>
+
 "*****************************************************************************
 "" Database
 "*****************************************************************************
@@ -751,8 +759,8 @@ nnoremap <leader>;* :DBListColumn<CR>
 vnoremap <leader>;u :call GenerateUpdate()<CR>
 vnoremap <leader>;i :call GenerateCreate()<CR>
 vnoremap <leader>;v :call ViewTable()<CR>
-vnoremap <leader>;; :call ExecuteScript()<CR>
 vnoremap <leader>;_ :call Lodash()<CR>
+vnoremap <leader>;; :call ExecuteScript()<CR>
 
 "*****************************************************************************
 "" Functions
@@ -806,9 +814,36 @@ function! Lodash() range
   let expression = input('Enter chain command: ')
   call inputrestore()
 
-  let result = ''
   if len(expression) > 0
     call setreg('0', system('echo '.data."| _.chain -i line '".expression."'"))
   endif
 
+endfunction
+
+function! CalcBC()
+  let has_equal = 0
+  " remove newlines and trailing spaces
+  let @e = substitute (@e, "\n", "", "g")
+  let @e = substitute (@e, '\s*$', "", "g")
+  " if we end with an equal, strip, and remember for output
+  if @e =~ "=$"
+    let @e = substitute (@e, '=$', "", "")
+    let has_equal = 1
+  endif
+  " sub common func names for bc equivalent
+  let @e = substitute (@e, '\csin\s*(', "s (", "")
+  let @e = substitute (@e, '\ccos\s*(', "c (", "")
+  let @e = substitute (@e, '\catan\s*(', "a (", "")
+  let @e = substitute (@e, "\cln\s*(", "l (", "")
+  " escape chars for shell
+  let @e = escape (@e, '*()')
+  " run bc, strip newline
+  let answer = substitute (system ("echo " . @e . " \| bc -l"), "\n", "", "")
+  " append answer or echo
+  if has_equal == 1
+    normal `>
+    exec "normal a" . answer
+  else
+    echo "answer = " . answer
+  endif
 endfunction
