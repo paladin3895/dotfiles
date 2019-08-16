@@ -20,7 +20,7 @@ if !filereadable(vimplug_exists)
   autocmd VimEnter * PlugInstall
 endif
 
-
+set mouse=a
 
 " Required:
 call plug#begin(expand('~/.config/nvim/plugged'))
@@ -38,12 +38,12 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-scripts/grep.vim'
+Plug 'yegappan/greplace'
 Plug 'vim-scripts/CSApprox'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'Raimondi/delimitMate'
+Plug 'craigemery/vim-autotag'
 Plug 'majutsushi/tagbar'
-Plug 'ludovicchabant/vim-gutentags'
-Plug 'skywind3000/gutentags_plus'
 Plug 'scrooloose/syntastic'
 Plug 'Yggdroot/indentLine'
 Plug 'avelino/vim-bootstrap-updater'
@@ -57,7 +57,6 @@ Plug 'flazz/vim-colorschemes'
 Plug 'vim-scripts/vimwiki'
 Plug 'gerw/vim-latex-suite'
 Plug 'posva/vim-vue'
-Plug 'mxw/vim-jsx'
 Plug 'terryma/vim-multiple-cursors'
 " Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
 Plug 'vim-scripts/dbext.vim'
@@ -65,11 +64,9 @@ Plug 'mechatroner/rainbow_csv'
 Plug 'tpope/vim-abolish'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'Valloric/YouCompleteMe'
-" Plug 'NLKNguyen/pipe.vim'
+Plug 'NLKNguyen/pipe.vim'
 Plug 'Shougo/neoyank.vim'
 Plug 'justinhoward/fzf-neoyank'
-Plug 'dhruvasagar/vim-table-mode'
-Plug 'ap/vim-css-color'
 
 " Plug 'SirVer/ultisnips'
 Plug 'MarcWeber/vim-addon-mw-utils'
@@ -77,7 +74,7 @@ Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
 Plug 'honza/vim-snippets'
 Plug 'thinca/vim-quickrun'
-Plug 'easymotion/vim-easymotion'
+" Plug 'easymotion/vim-easymotion'
 Plug 'dhruvasagar/vim-table-mode'
 
 if isdirectory('/usr/local/opt/fzf')
@@ -104,20 +101,6 @@ if v:version >= 704
   "" Snippets
   " Plug 'SirVer/ultisnips'
 endif
-
-" enable gtags module
-let g:gutentags_modules = ['ctags', 'gtags_cscope']
-
-" config project root markers.
-let g:gutentags_project_root = []
-
-" generate datebases in my cache directory, prevent gtags files polluting my project
-let g:gutentags_cache_dir = expand('~/.cache/tags')
-
-" change focus to quickfix window after search (optional).
-let g:gutentags_plus_switch = 1
-
-set statusline+=%{gutentags#statusline()}
 
 " let g:UltiSnipsSnippetsDir = $HOME.'/.config/nvim/ultisnippets'
 " let g:UltiSnipsSnippetDirectories = [$HOME.'/.config/nvim/ultisnippets']
@@ -156,9 +139,6 @@ Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 "*****************************************************************************
 " Plug 'ctrlpvim/ctrlp.vim'
 
-" Plug 'vimwiki'
-let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
-
 "" Include user's extra bundle
 if filereadable(expand("~/.config/nvim/local_bundles.vim"))
   source ~/.config/nvim/local_bundles.vim
@@ -168,10 +148,6 @@ call plug#end()
 
 " Required:
 filetype plugin indent on
-
-" vim-table
-let g:table_mode_corner_corner='+'
-let g:table_mode_header_fillchar='-'
 
 "*****************************************************************************
 "" Basic Setup
@@ -229,17 +205,19 @@ let g:session_command_aliases = 1
 map <Leader> <Plug>(easymotion-prefix)
 
 "pipe
-" let g:pipe_no_mappings = 1
+let g:pipe_no_mappings = 1
 
 " Use your key
-" noremap <leader><bar>x :Pipe 
-" noremap <leader><bar>c :PipeToggleWindow<CR>
+noremap <leader><bar>x :Pipe 
+noremap <leader><bar>c :PipeToggleWindow<CR>
+
 "*****************************************************************************
 "" Visual Settings
 "*****************************************************************************
 syntax on
 set ruler
 set number
+set textwidth=0
 
 let no_buffers_menu=1
 if !exists('g:not_finish_vimplug')
@@ -416,13 +394,37 @@ if !exists('*s:setupWrapping')
   endfunction
 endif
 
+"" use cscope
+if has('cscope')
+  set cscopetag cscopeverbose
+
+  if has('quickfix')
+    set cscopequickfix=s-,c-,d-,i-,t-,e-
+  endif
+
+  " cnoreabbrev csa cs add
+  " cnoreabbrev csf cs find
+  " cnoreabbrev csk cs kill
+  " cnoreabbrev csr cs reset
+  " cnoreabbrev css cs show
+  " cnoreabbrev csh cs help
+
+  command! -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
+endif
+
 "*****************************************************************************
 "" Autocmd Rules
 "*****************************************************************************
+"" update cscope
+augroup update-cscope
+  autocmd!
+  autocmd BufEnter * :syntax sync maxlines=1000
+augroup END
+
 "" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
 augroup vimrc-sync-fromstart
   autocmd!
-  autocmd BufEnter * :syntax sync maxlines=200
+  autocmd BufEnter * :syntax sync maxlines=1000
 augroup END
 
 "" Remember cursor position
@@ -444,14 +446,17 @@ augroup vimrc-make-cmake
   autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
 augroup END
 
+"" update ctags
+" augroup vimrc-update-ctags
+"   autocmd BufWritePost *.js,*.php,*.vue silent! !ctags -R &
+" augroup END
+"
+
 set autoread
 
 "*****************************************************************************
 "" Mappings
 "*****************************************************************************
-"
-" EasyMotion
-map <Leader> <Plug>(easymotion-prefix)
 
 "" Split
 noremap <Leader>- :<C-u>split<CR>
@@ -469,8 +474,8 @@ noremap <Leader>gr :Gremove<CR>
 
 "" gitgutter
 noremap <Leader>gh :GitGutterPreviewHunk<CR>
-noremap <Leader>g> :GitGutterNextHunk<CR>
-noremap <Leader>g< :GitGutterPrevHunk<CR>
+noremap <Leader>gn :GitGutterNextHunk<CR>
+noremap <Leader>gp :GitGutterPrevHunk<CR>
 
 " session management
 nnoremap <leader>so :OpenSession<Space>
@@ -561,10 +566,10 @@ noremap <leader>c :bd!<CR>
 nnoremap <silent> <leader><space> :noh<cr>
 
 "" Switching windows
-noremap <leader>j <C-w>j<Esc>
-noremap <leader>k <C-w>k<Esc>
-noremap <leader>l <C-w>l<Esc>
-noremap <leader>h <C-w>h<Esc>
+nnoremap <leader>j <C-w>j
+nnoremap <leader>k <C-w>k
+nnoremap <leader>l <C-w>l
+nnoremap <leader>h <C-w>h
 
 "" Vmap for maintain Visual Mode after shifting > and <
 vmap < <gv
@@ -603,7 +608,7 @@ augroup END
 " vim-typescript
 augroup vimrc-typescript
   autocmd!
-  autocmd FileType typescript set tabstop=2|set shiftwidth=2|set expandtab softtabstop=2
+  autocmd FileType typescript set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
 augroup END
 
 " php
@@ -738,19 +743,23 @@ vnoremap ~ y:call setreg('', TwiddleCase(@"), getregtype(''))<CR>gv""Pgv
 tnoremap <Esc> <C-\><C-n>
 
 " Utilities
+vnoremap <leader># :call ExecuteScript()<CR>
 vnoremap <leader>bc "ey:call CalcBC()<CR>
+
+nnoremap <leader><Tab> :call SetTabWidth()<CR>
 
 "*****************************************************************************
 "" Database
 "*****************************************************************************
 source ~/.config/nvim/db.vim
 
-let g:dbext_default_MYSQL_extra = '--batch --raw'
+" let g:dbext_default_MYSQL_extra = '--batch --raw'
 
 nnoremap <leader>;? :DBSetOption profile=
 nnoremap <leader>;x :DBExecSQLUnderCursor<CR>
 vnoremap <leader>;x :DBExecVisualSQL<CR>
 nnoremap <leader>;c :DBResultsClose<CR>
+nnoremap <leader>;c :SyntasticToggleMode<CR>
 nnoremap <leader>;o :DBResultsOpen<CR>
 nnoremap <leader>;t :DBDescribeTable<CR>
 nnoremap <leader>;d :DBListTable<CR>
@@ -796,12 +805,10 @@ function! GenerateUpsert() range
 endfunction
 
 function! ExecuteScript() range
-  call inputsave()
-  let scripttype = input('Enter script type: ')
-  call inputrestore()
-
-  if strlen(scripttype) > 0
-    execute "'<,'>QuickRun ".scripttype
+  if &ft == 'javascript'
+    execute "'<,'>QuickRun javascript"
+  elseif &ft == 'php'
+    execute "'<,'>QuickRun php"
   else
     execute "'<,'>QuickRun zsh"
   endif
@@ -846,4 +853,16 @@ function! CalcBC()
   else
     echo "answer = " . answer
   endif
+endfunction
+
+function! SetTabWidth()
+  call inputsave()
+  let tabWidth = input('Enter tab width: ')
+  call inputrestore()
+
+  execute("set tabstop=" . tabWidth)
+  execute("set softtabstop=" . tabWidth)
+  execute("set shiftwidth=" . tabWidth)
+  execute("set expandtab")
+  execute("set smarttab")
 endfunction
