@@ -1,0 +1,27 @@
+snippet mysql
+	mysql --host=${1:192.168.10.10} --user=${2:homestead} --password=${3:secret} ${4:database}
+endsnippet
+
+snippet scp
+	scp -r ${1:user@host:}${2:file} ${3:user@host:}${4:file}
+endsnippet
+
+snippet mysqlimport
+	mysqlimport --ignore-lines=1
+				--fields-terminated-by=${5:,}
+				--local
+				--host=${1:192.168.10.10}
+				--user=${2:homestead}
+				--password=${3:secret}
+	csv ${4:table}.csv
+endsnippet
+
+snippet csvdb
+	csvsql --db mysql://${2:homestead:secret}@${1:192.168.10.10}:3306/csv \
+		--tables ${3:table} \
+		--insert $3.csv \
+		--overwrite \
+		-d ${4:,} \
+		-e ${5:utf8} \
+		-I
+endsnippet
