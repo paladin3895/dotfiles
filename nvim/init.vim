@@ -76,6 +76,7 @@ Plug 'honza/vim-snippets'
 Plug 'thinca/vim-quickrun'
 " Plug 'easymotion/vim-easymotion'
 Plug 'dhruvasagar/vim-table-mode'
+Plug 'jpalardy/vim-slime'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -132,7 +133,6 @@ Plug 'arnaud-lb/vim-php-namespace'
 "" Python Bundle
 Plug 'davidhalter/jedi-vim'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
-
 
 "*****************************************************************************
 "" User bundles
@@ -206,6 +206,13 @@ map <Leader> <Plug>(easymotion-prefix)
 
 "pipe
 let g:pipe_no_mappings = 1
+
+" vimwiki
+let g:vimwiki_list = [{'path': '~/vimwiki', 'syntax': 'markdown', 'ext': '.wiki'}]
+
+" v-slime
+let g:slime_target = "tmux"
+let g:slime_paste_file = tempname()
 
 " Use your key
 noremap <leader><bar>x :Pipe 
@@ -560,7 +567,7 @@ noremap <leader>z :bp<CR>
 noremap <leader>x :bn<CR>
 
 "" Close buffer
-noremap <leader>c :bd!<CR>
+noremap <leader>c :bd<CR>
 
 "" Clean search (highlight)
 nnoremap <silent> <leader><space> :noh<cr>
