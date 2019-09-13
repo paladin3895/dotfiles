@@ -409,12 +409,29 @@ if has('cscope')
     set cscopequickfix=s-,c-,d-,i-,t-,e-
   endif
 
+  " C symbol
+  nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+  " definition
+  nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+  " functions that called by this function
+  nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+  " funtions that calling this function
+  nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+  " test string
+  nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+  " egrep pattern
+  nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+  " file
+  nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+  " files #including this file
+  nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+
   " cnoreabbrev csa cs add
   " cnoreabbrev csf cs find
   " cnoreabbrev csk cs kill
   " cnoreabbrev csr cs reset
   " cnoreabbrev css cs show
-  " cnoreabbrev csh cs help
+  " cnoreabbre
 
   command! -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
 endif
@@ -453,6 +470,12 @@ augroup vimrc-make-cmake
   autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
 augroup END
 
+augroup vimrc-haskell
+  au FileType haskell nnoremap <buffer> <F1> :HdevtoolsType<CR>
+  " au FileType haskell nnoremap <buffer> <silent> <F2> :HdevtoolsClear<CR>
+  " au FileType haskell nnoremap <buffer> <silent> <F3> :HdevtoolsInfo<CR>
+augroup END
+
 "" update ctags
 " augroup vimrc-update-ctags
 "   autocmd BufWritePost *.js,*.php,*.vue silent! !ctags -R &
@@ -472,10 +495,10 @@ noremap <Leader>_ :<C-u>vsplit<CR>
 "" Git
 noremap <Leader>ga :Gwrite<CR>
 noremap <Leader>gc :Gcommit<CR>
-noremap <Leader>gp :Gpush<CR>
-noremap <Leader>gl :Gpull<CR>
-noremap <Leader>gst :Gstatus<CR>
-noremap <Leader>gbl :Gblame<CR>
+noremap <Leader>gsh :Gpush<CR>
+noremap <Leader>gll :Gpull<CR>
+noremap <Leader>gs :Gstatus<CR>
+noremap <Leader>gb :Gblame<CR>
 noremap <Leader>gd :Gvdiff<CR>
 noremap <Leader>gr :Gremove<CR>
 
@@ -502,7 +525,7 @@ nnoremap <leader>. :lcd %:p:h<CR>
 " noremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 
 "" Opens a tab edit command with the path of the currently edited file filled
-" noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
+noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
 "" fzf.vim
 set wildmode=list:longest,list:full
@@ -589,9 +612,6 @@ vnoremap K :m '<-2<CR>gv=gv
 "" Open current line on GitHub
 nnoremap <Leader>o :.Gbrowse<CR>
 
-"" Quickly change filetype
-nnoremap <leader>? :setfiletype 
-
 "*****************************************************************************
 "" Custom configs
 "*****************************************************************************
@@ -647,6 +667,7 @@ augroup END
 
 " syntastic
 let g:syntastic_python_checkers=['python', 'flake8']
+let g:syntastic_haskell_checkers=['hlint']
 
 " vim-airline
 let g:airline#extensions#virtualenv#enabled = 1
@@ -728,7 +749,6 @@ set timeoutlen=1000
 nnoremap <Leader>R :source $MYVIMRC<CR>
 nnoremap <Space> li<CR><Esc>O
 nnoremap <Backspace> kJJhs
-
 nnoremap <A-k> :resize +10<CR>
 nnoremap <A-j> :resize -10<CR>
 nnoremap <A-h> :vertical resize +10<CR>
@@ -828,10 +848,12 @@ function! Lodash() range
   let expression = input('Enter chain command: ')
   call inputrestore()
 
-  if len(expression) > 0
-    call setreg('0', system('echo '.data."| _.chain -i line '".expression."'"))
+  let result = ''
+  if expression
+    result = system('echo '.input."| _.chain -i line '".expression."'")
   endif
 
+  echom result
 endfunction
 
 function! CalcBC()
@@ -873,3 +895,10 @@ function! SetTabWidth()
   execute("set expandtab")
   execute("set smarttab")
 endfunction
+
+function! SplitLines() range
+    let line = getline(a:firstline, a:lastline)
+    echo line
+endfunction
+" (test , sd , fsd)
+" (test , sd , fsd)
