@@ -20,7 +20,6 @@ if !filereadable(vimplug_exists)
   autocmd VimEnter * PlugInstall
 endif
 
-set mouse=a
 
 " Required:
 call plug#begin(expand('~/.config/nvim/plugged'))
@@ -57,6 +56,7 @@ Plug 'flazz/vim-colorschemes'
 Plug 'vim-scripts/vimwiki'
 Plug 'gerw/vim-latex-suite'
 Plug 'posva/vim-vue'
+Plug 'mxw/vim-jsx'
 Plug 'terryma/vim-multiple-cursors'
 " Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
 Plug 'vim-scripts/dbext.vim'
@@ -64,9 +64,10 @@ Plug 'mechatroner/rainbow_csv'
 Plug 'tpope/vim-abolish'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'Valloric/YouCompleteMe'
-Plug 'NLKNguyen/pipe.vim'
 Plug 'Shougo/neoyank.vim'
 Plug 'justinhoward/fzf-neoyank'
+Plug 'dhruvasagar/vim-table-mode'
+Plug 'ap/vim-css-color'
 
 " Plug 'SirVer/ultisnips'
 Plug 'MarcWeber/vim-addon-mw-utils'
@@ -103,6 +104,20 @@ if v:version >= 704
   " Plug 'SirVer/ultisnips'
 endif
 
+" enable gtags module
+" let g:gutentags_modules = ['ctags', 'gtags_cscope']
+
+" config project root markers.
+" let g:gutentags_project_root = []
+
+" generate datebases in my cache directory, prevent gtags files polluting my project
+" let g:gutentags_cache_dir = expand('~/.cache/tags')
+
+" change focus to quickfix window after search (optional).
+" let g:gutentags_plus_switch = 1
+
+" set statusline+=%{gutentags#statusline()}
+
 " let g:UltiSnipsSnippetsDir = $HOME.'/.config/nvim/ultisnippets'
 " let g:UltiSnipsSnippetDirectories = [$HOME.'/.config/nvim/ultisnippets']
 
@@ -134,10 +149,17 @@ Plug 'arnaud-lb/vim-php-namespace'
 Plug 'davidhalter/jedi-vim'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 
+
 "*****************************************************************************
 "" User bundles
 "*****************************************************************************
 " Plug 'ctrlpvim/ctrlp.vim'
+"
+" Plug 'justinmk/vim-sneak'
+" let g:sneak#label = 1
+
+" Plug 'vimwiki'
+let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
 
 "" Include user's extra bundle
 if filereadable(expand("~/.config/nvim/local_bundles.vim"))
@@ -148,6 +170,10 @@ call plug#end()
 
 " Required:
 filetype plugin indent on
+
+" vim-table
+let g:table_mode_corner_corner='+'
+let g:table_mode_header_fillchar='-'
 
 "*****************************************************************************
 "" Basic Setup
@@ -181,6 +207,14 @@ set hlsearch
 set incsearch
 set ignorecase
 set smartcase
+let g:esearch = {
+  \ 'adapter':          'ag',
+  \ 'backend':          'nvim',
+  \ 'out':              'win',
+  \ 'batch_size':       1000,
+  \ 'use':              ['visual', 'hlsearch', 'last'],
+  \ 'default_mappings': 1,
+  \}
 
 "" Directories for swp files
 set nobackup
@@ -201,9 +235,6 @@ let g:session_autoload = "no"
 let g:session_autosave = "no"
 let g:session_command_aliases = 1
 
-" EasyMotion
-map <Leader> <Plug>(easymotion-prefix)
-
 "pipe
 let g:pipe_no_mappings = 1
 
@@ -215,18 +246,19 @@ let g:slime_target = "tmux"
 let g:slime_paste_file = tempname()
 
 " Use your key
-noremap <leader><bar>x :Pipe 
-noremap <leader><bar>c :PipeToggleWindow<CR>
-
+" noremap <leader><bar>x :Pipe 
+" noremap <leader><bar>c :PipeToggleWindow<CR>
 "*****************************************************************************
 "" Visual Settings
 "*****************************************************************************
+"
+"
 syntax on
 set ruler
 set number
-set textwidth=0
 
 let no_buffers_menu=1
+let g:solarized_termcolors=256
 if !exists('g:not_finish_vimplug')
   set background=dark
   colorscheme solarized
@@ -448,7 +480,7 @@ augroup END
 "" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
 augroup vimrc-sync-fromstart
   autocmd!
-  autocmd BufEnter * :syntax sync maxlines=1000
+  autocmd BufEnter * :syntax sync maxlines=200
 augroup END
 
 "" Remember cursor position
@@ -495,17 +527,17 @@ noremap <Leader>_ :<C-u>vsplit<CR>
 "" Git
 noremap <Leader>ga :Gwrite<CR>
 noremap <Leader>gc :Gcommit<CR>
-noremap <Leader>gsh :Gpush<CR>
-noremap <Leader>gll :Gpull<CR>
-noremap <Leader>gs :Gstatus<CR>
-noremap <Leader>gb :Gblame<CR>
+noremap <Leader>gp :Gpush<CR>
+noremap <Leader>gl :Gpull<CR>
+noremap <Leader>gst :Gstatus<CR>
+noremap <Leader>gbl :Gblame<CR>
 noremap <Leader>gd :Gvdiff<CR>
 noremap <Leader>gr :Gremove<CR>
 
 "" gitgutter
 noremap <Leader>gh :GitGutterPreviewHunk<CR>
-noremap <Leader>gn :GitGutterNextHunk<CR>
-noremap <Leader>gp :GitGutterPrevHunk<CR>
+noremap <Leader>g> :GitGutterNextHunk<CR>
+noremap <Leader>g< :GitGutterPrevHunk<CR>
 
 " session management
 nnoremap <leader>so :OpenSession<Space>
@@ -525,7 +557,7 @@ nnoremap <leader>. :lcd %:p:h<CR>
 " noremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 
 "" Opens a tab edit command with the path of the currently edited file filled
-noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
+" noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
 "" fzf.vim
 set wildmode=list:longest,list:full
@@ -590,16 +622,16 @@ noremap <leader>z :bp<CR>
 noremap <leader>x :bn<CR>
 
 "" Close buffer
-noremap <leader>c :bd<CR>
+noremap <leader>c :bd!<CR>
 
 "" Clean search (highlight)
 nnoremap <silent> <leader><space> :noh<cr>
 
 "" Switching windows
-nnoremap <leader>j <C-w>j
-nnoremap <leader>k <C-w>k
-nnoremap <leader>l <C-w>l
-nnoremap <leader>h <C-w>h
+noremap <leader>j <C-w>j<Esc>
+noremap <leader>k <C-w>k<Esc>
+noremap <leader>l <C-w>l<Esc>
+noremap <leader>h <C-w>h<Esc>
 
 "" Vmap for maintain Visual Mode after shifting > and <
 vmap < <gv
@@ -611,6 +643,9 @@ vnoremap K :m '<-2<CR>gv=gv
 
 "" Open current line on GitHub
 nnoremap <Leader>o :.Gbrowse<CR>
+
+"" Quickly change filetype
+nnoremap <leader>? :setfiletype 
 
 "*****************************************************************************
 "" Custom configs
@@ -629,13 +664,13 @@ let g:javascript_enable_domhtmlcss = 1
 " vim-javascript
 augroup vimrc-javascript
   autocmd!
-  autocmd FileType javascript set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
+  autocmd FileType javascript set tabstop=2|set shiftwidth=2|set expandtab softtabstop=2
 augroup END
 
 " vim-typescript
 augroup vimrc-typescript
   autocmd!
-  autocmd FileType typescript set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
+  autocmd FileType typescript set tabstop=2|set shiftwidth=2|set expandtab softtabstop=2
 augroup END
 
 " php
@@ -667,7 +702,6 @@ augroup END
 
 " syntastic
 let g:syntastic_python_checkers=['python', 'flake8']
-let g:syntastic_haskell_checkers=['hlint']
 
 " vim-airline
 let g:airline#extensions#virtualenv#enabled = 1
@@ -748,7 +782,7 @@ set timeoutlen=1000
 " Make space more useful
 nnoremap <Leader>R :source $MYVIMRC<CR>
 nnoremap <Space> li<CR><Esc>O
-nnoremap <Backspace> kJJhs
+
 nnoremap <A-k> :resize +10<CR>
 nnoremap <A-j> :resize -10<CR>
 nnoremap <A-h> :vertical resize +10<CR>
@@ -832,10 +866,12 @@ function! GenerateUpsert() range
 endfunction
 
 function! ExecuteScript() range
-  if &ft == 'javascript'
-    execute "'<,'>QuickRun javascript"
-  elseif &ft == 'php'
-    execute "'<,'>QuickRun php"
+  call inputsave()
+  let scripttype = input('Enter script type: ')
+  call inputrestore()
+
+  if strlen(scripttype) > 0
+    execute "'<,'>QuickRun ".scripttype
   else
     execute "'<,'>QuickRun zsh"
   endif
@@ -896,9 +932,4 @@ function! SetTabWidth()
   execute("set smarttab")
 endfunction
 
-function! SplitLines() range
-    let line = getline(a:firstline, a:lastline)
-    echo line
 endfunction
-" (test , sd , fsd)
-" (test , sd , fsd)
