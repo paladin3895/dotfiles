@@ -1,0 +1,44 @@
+snippet @if "blade if block"
+	@if (${1:condition})
+		${2:code}
+	@endif
+endsnippet
+
+snippet @ife "blade if ... else block"
+	@if (${1:condition})
+		${2:code}
+	@else
+		${3:code}
+	@endif
+endsnippet
+
+snippet @php "blade php code block"
+	@php
+		${1:code}
+	@endphp
+endsnippet
+
+snippet @foreach "blade foreach block"
+	@foreach (${1:values} as ${2:value})
+		${3:code}
+	@endforeach
+endsnippet
+
+snippet @vue "blade vue component block"
+	@vue (${1:id}, ${2:js})
+		{{
+			json_encode([
+				'data' => ${3:[]},
+				'config' => ${4:[]}
+			])
+		}}
+	@endvue
+endsnippet
+
+snippet @$ "blade variable output"
+	{{ ${1:expression} }}
+endsnippet
+
+snippet @h "blade helper function"
+	{{ $h->${1:function}(${2:var}) }}
+endsnippet

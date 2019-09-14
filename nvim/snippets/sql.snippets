@@ -24,6 +24,16 @@ snippet swl
 	limit ${5:1}
 endsnippet
 
+snippet join
+	join ${1:table}
+	on ${2:col1} = ${3:col2}
+endsnippet
+
+snippet delete
+	delete from ${1:table}
+	where ${2:col} = ${3:value}
+endsnippet
+
 snippet update
 	update ${1:table}
 	set ${2:col} = ${3:value}
