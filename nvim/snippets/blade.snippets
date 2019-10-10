@@ -1,44 +1,74 @@
-snippet @if "blade if block"
-	@if (${1:condition})
-		${2:code}
-	@endif
+snippet s*w
+	select *
+	from ${1:table}
+	where ${2:col} = ${3:value}
 endsnippet
 
-snippet @ife "blade if ... else block"
-	@if (${1:condition})
-		${2:code}
-	@else
-		${3:code}
-	@endif
+snippet s*wl
+	select *
+	from ${1:table}
+	where ${2:col} = ${3:value}
+	limit ${4:1}
 endsnippet
 
-snippet @php "blade php code block"
-	@php
-		${1:code}
-	@endphp
+snippet s*wi
+	select *
+	from ${1:table}
+	where ${2:col} in (
+		${3:values}
+	)
 endsnippet
 
-snippet @foreach "blade foreach block"
-	@foreach (${1:values} as ${2:value})
-		${3:code}
-	@endforeach
+snippet sw
+	select ${1:col}
+	from ${2:table}
+	where ${3:col} = ${4:value}
 endsnippet
 
-snippet @vue "blade vue component block"
-	@vue (${1:id}, ${2:js})
-		{{
-			json_encode([
-				'data' => ${3:[]},
-				'config' => ${4:[]}
-			])
-		}}
-	@endvue
+snippet swl
+	select ${1:col}
+	from ${2:table}
+	where ${3:col} = ${4:value}
+	limit ${5:1}
 endsnippet
 
-snippet @$ "blade variable output"
-	{{ ${1:expression} }}
+snippet swi
+	select ${1:col}
+	from ${2:table}
+	where ${3:col} in (
+		${4:values}
+	)
 endsnippet
 
-snippet @h "blade helper function"
-	{{ $h->${1:function}(${2:var}) }}
+snippet join
+	join ${1:table}
+	on ${2:col1} = ${3:col2}
+endsnippet
+
+snippet delete
+	delete from ${1:table}
+	where ${2:col} = ${3:value}
+endsnippet
+
+snippet update
+	update ${1:table}
+	set ${2:col} = ${3:value}
+	where ${4:col} = ${5:value}
+endsnippet
+
+snippet insert
+	insert into ${1:table} (
+		${2:col}
+	) values (
+		${3:values}
+	)
+endsnippet
+
+snippet upsert
+	insert into ${1:table} (
+		${2:col}
+	) values (
+		${3:values}
+	) on duplicate key
+	update ${4:expr}
 endsnippet
