@@ -70,14 +70,18 @@ Plug 'dhruvasagar/vim-table-mode'
 Plug 'ap/vim-css-color'
 
 " Plug 'SirVer/ultisnips'
+" Plug 'easymotion/vim-easymotion'
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
 Plug 'honza/vim-snippets'
 Plug 'thinca/vim-quickrun'
-" Plug 'easymotion/vim-easymotion'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'jpalardy/vim-slime'
+
+Plug 'Shougo/neco-vim'
+Plug 'neoclide/coc-neco'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -264,6 +268,7 @@ if !exists('g:not_finish_vimplug')
   colorscheme solarized
 endif
 
+set mouse=a
 set mousemodel=popup
 set t_Co=256
 set guioptions=egmrti
@@ -434,48 +439,48 @@ if !exists('*s:setupWrapping')
 endif
 
 "" use cscope
-if has('cscope')
-  set cscopetag cscopeverbose
+" if has('cscope')
+"   set cscopetag cscopeverbose
 
-  if has('quickfix')
-    set cscopequickfix=s-,c-,d-,i-,t-,e-
-  endif
+"   if has('quickfix')
+"     set cscopequickfix=s-,c-,d-,i-,t-,e-
+"   endif
 
-  " C symbol
-  nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-  " definition
-  nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-  " functions that called by this function
-  nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-  " funtions that calling this function
-  nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-  " test string
-  nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-  " egrep pattern
-  nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-  " file
-  nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-  " files #including this file
-  nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+"   " C symbol
+"   nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+"   " definition
+"   nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+"   " functions that called by this function
+"   nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+"   " funtions that calling this function
+"   nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+"   " test string
+"   nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+"   " egrep pattern
+"   nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+"   " file
+"   nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+"   " files #including this file
+"   nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 
-  " cnoreabbrev csa cs add
-  " cnoreabbrev csf cs find
-  " cnoreabbrev csk cs kill
-  " cnoreabbrev csr cs reset
-  " cnoreabbrev css cs show
-  " cnoreabbre
+"   " cnoreabbrev csa cs add
+"   " cnoreabbrev csf cs find
+"   " cnoreabbrev csk cs kill
+"   " cnoreabbrev csr cs reset
+"   " cnoreabbrev css cs show
+"   " cnoreabbre
 
-  command! -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
-endif
+"   " command! -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
+" endif
 
 "*****************************************************************************
 "" Autocmd Rules
 "*****************************************************************************
 "" update cscope
-augroup update-cscope
-  autocmd!
-  autocmd BufEnter * :syntax sync maxlines=1000
-augroup END
+" augroup update-cscope
+"   autocmd!
+"   autocmd BufEnter * :syntax sync maxlines=1000
+" augroup END
 
 "" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
 augroup vimrc-sync-fromstart
@@ -645,7 +650,21 @@ vnoremap K :m '<-2<CR>gv=gv
 nnoremap <Leader>o :.Gbrowse<CR>
 
 "" Quickly change filetype
-nnoremap <leader>? :setfiletype 
+nnoremap <leader>* :setfiletype 
+
+nmap g] <Plug>(coc-definition)
+nmap g[ <Plug>(coc-references)
+
+nmap <leader>?d <Plug>(coc-declaration)
+nmap <leader>?i <Plug>(coc-implementation)
+nmap <leader>?t <Plug>(coc-type-definition)
+nmap <leader>?r <Plug>(coc-refactor)
+
+nmap <leader>?n <Plug>(coc-diagnostic-next-error)
+nmap <leader>?p <Plug>(coc-diagnostic-prev-error)
+
+nmap <leader>> <Plug>(coc-format-selected)
+vmap <leader>> <Plug>(coc-format-selected)
 
 "*****************************************************************************
 "" Custom configs
@@ -664,7 +683,7 @@ let g:javascript_enable_domhtmlcss = 1
 " vim-javascript
 augroup vimrc-javascript
   autocmd!
-  autocmd FileType javascript set tabstop=2|set shiftwidth=2|set expandtab softtabstop=2
+  autocmd FileType javascript set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
 augroup END
 
 " vim-typescript
@@ -930,6 +949,4 @@ function! SetTabWidth()
   execute("set shiftwidth=" . tabWidth)
   execute("set expandtab")
   execute("set smarttab")
-endfunction
-
 endfunction
