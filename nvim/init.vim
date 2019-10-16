@@ -233,6 +233,9 @@ else
     set shell=/bin/sh
 endif
 
+" Live substitute
+set inccommand=nosplit
+
 " session management
 let g:session_directory = "~/.config/nvim/session"
 let g:session_autoload = "no"
@@ -655,10 +658,10 @@ nnoremap <leader>* :setfiletype
 nmap g] <Plug>(coc-definition)
 nmap g[ <Plug>(coc-references)
 
-nmap <leader>?d <Plug>(coc-declaration)
+nmap <leader>?d <Plug>(coc-definition)
 nmap <leader>?i <Plug>(coc-implementation)
 nmap <leader>?t <Plug>(coc-type-definition)
-nmap <leader>?r <Plug>(coc-refactor)
+nmap <leader>?r <Plug>(coc-references)
 
 nmap <leader>?n <Plug>(coc-diagnostic-next-error)
 nmap <leader>?p <Plug>(coc-diagnostic-prev-error)
