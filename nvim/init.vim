@@ -41,9 +41,9 @@ Plug 'yegappan/greplace'
 Plug 'vim-scripts/CSApprox'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'Raimondi/delimitMate'
-Plug 'craigemery/vim-autotag'
-Plug 'majutsushi/tagbar'
+" Plug 'craigemery/vim-autotag'
 Plug 'scrooloose/syntastic'
+Plug 'majutsushi/tagbar'
 Plug 'Yggdroot/indentLine'
 Plug 'avelino/vim-bootstrap-updater'
 Plug 'sheerun/vim-polyglot'
@@ -54,7 +54,7 @@ Plug 'eugen0329/vim-esearch'
 Plug 'yuratomo/w3m.vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'vim-scripts/vimwiki'
-Plug 'gerw/vim-latex-suite'
+" Plug 'gerw/vim-latex-suite'
 Plug 'posva/vim-vue'
 Plug 'mxw/vim-jsx'
 Plug 'terryma/vim-multiple-cursors'
@@ -107,18 +107,6 @@ if v:version >= 704
   "" Snippets
   " Plug 'SirVer/ultisnips'
 endif
-
-" enable gtags module
-" let g:gutentags_modules = ['ctags', 'gtags_cscope']
-
-" config project root markers.
-" let g:gutentags_project_root = []
-
-" generate datebases in my cache directory, prevent gtags files polluting my project
-" let g:gutentags_cache_dir = expand('~/.cache/tags')
-
-" change focus to quickfix window after search (optional).
-" let g:gutentags_plus_switch = 1
 
 " set statusline+=%{gutentags#statusline()}
 
@@ -411,22 +399,6 @@ else
   nnoremap <silent> <leader>sh :VimShellCreate<CR>
 endif
 
-" CtrlP.vim
-" let g:ctrlp_map = '<c-p>'
-" let g:ctrlp_cmd = 'CtrlP'
-" let g:ctrlp_working_path_mode = 'ra'
-" set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
-" set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
-
-
-" let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
-" let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-" let g:ctrlp_custom_ignore = {
-"   \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-"   \ 'file': '\v\.(exe|so|dll)$',
-"   \ 'link': 'some_bad_symbolic_links',
-"   \ }
-
 " Rainbow_csv
 let g:rbql_backend_language = 'js'
 
@@ -441,49 +413,9 @@ if !exists('*s:setupWrapping')
   endfunction
 endif
 
-"" use cscope
-" if has('cscope')
-"   set cscopetag cscopeverbose
-
-"   if has('quickfix')
-"     set cscopequickfix=s-,c-,d-,i-,t-,e-
-"   endif
-
-"   " C symbol
-"   nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-"   " definition
-"   nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-"   " functions that called by this function
-"   nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-"   " funtions that calling this function
-"   nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-"   " test string
-"   nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-"   " egrep pattern
-"   nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-"   " file
-"   nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-"   " files #including this file
-"   nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-
-"   " cnoreabbrev csa cs add
-"   " cnoreabbrev csf cs find
-"   " cnoreabbrev csk cs kill
-"   " cnoreabbrev csr cs reset
-"   " cnoreabbrev css cs show
-"   " cnoreabbre
-
-"   " command! -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
-" endif
-
 "*****************************************************************************
 "" Autocmd Rules
 "*****************************************************************************
-"" update cscope
-" augroup update-cscope
-"   autocmd!
-"   autocmd BufEnter * :syntax sync maxlines=1000
-" augroup END
 
 "" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
 augroup vimrc-sync-fromstart
@@ -655,20 +587,6 @@ nnoremap <Leader>o :.Gbrowse<CR>
 "" Quickly change filetype
 nnoremap <leader>* :setfiletype 
 
-nmap g] <Plug>(coc-definition)
-nmap g[ <Plug>(coc-references)
-
-nmap <leader>?d <Plug>(coc-definition)
-nmap <leader>?i <Plug>(coc-implementation)
-nmap <leader>?t <Plug>(coc-type-definition)
-nmap <leader>?r <Plug>(coc-references)
-
-nmap <leader>?n <Plug>(coc-diagnostic-next-error)
-nmap <leader>?p <Plug>(coc-diagnostic-prev-error)
-
-nmap <leader>> <Plug>(coc-format-selected)
-vmap <leader>> <Plug>(coc-format-selected)
-
 "*****************************************************************************
 "" Custom configs
 "*****************************************************************************
@@ -835,6 +753,11 @@ nnoremap <leader><Tab> :call SetTabWidth()<CR>
 "" Database
 "*****************************************************************************
 source ~/.config/nvim/db.vim
+
+"*****************************************************************************
+"" Coc.vim
+"*****************************************************************************
+source ~/.config/nvim/coc.vim
 
 " let g:dbext_default_MYSQL_extra = '--batch --raw'
 
