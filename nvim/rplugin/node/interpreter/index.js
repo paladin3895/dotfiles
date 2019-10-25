@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
 const eol = require('eol');
-const state = require('./state');
 
 _.mixin({
     lines: (val) => {
@@ -28,7 +27,6 @@ module.exports = plugin => {
             return;
         }
 
-        plugin.nvim._context;
         await updateContext(plugin.nvim);
     }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
 
@@ -37,7 +35,7 @@ module.exports = plugin => {
             return;
         }
 
-        // await updateContext(plugin.nvim);
+        await updateContext(plugin.nvim);
     }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
 
     plugin.registerAutocmd('BufEnter', async (fileName) => {
@@ -45,10 +43,7 @@ module.exports = plugin => {
             return;
         }
 
-        // plugin.nvim._interval = setInterval(async () => {
-        //     await updateContext(plugin.nvim);
-        // }, 1000)
-        // await updateContext(plugin.nvim);
+        let context = await updateContext(plugin.nvim);
     }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
 
     plugin.registerAutocmd('BufLeave', async (fileName) => {
@@ -81,23 +76,141 @@ async function updateContext(nvim) {
 
     context.prevPos = context.currentPos;
     context.currentPos = _.split(await nvim.eval(`getpos(".")`), ',').map(_.parseInt);
-    context.quote = await getWrappedContent(nvim, "''");
-    context.dquote = await getWrappedContent(nvim, '""');
-    context.paren = await getWrappedContent(nvim, '()');
 
+    const transition = `${context.tmpMode} -> ${context.mode}`;
     if (context.tmpMode != context.mode) {
         context.prevMode = context.tmpMode;
         context.tmpMode = context.mode;
         context.modeChanged = true;
     }
 
-    const transition = `${context.tmpMode} -> ${context.mode}`;
-    context = state(transition) ? state(transition)(context) : state('*')(context);
+    context = state(nvim, transition) ? await state(nvim, transition)(context) : await state(nvim, '*')(context);
+    if (context.startPos[1] > context.endPos[1]) {
+        let tmp = context.endPos;
+        context.endPos = context.startPos;
+        context.startPos = tmp;
+    }
+    const lines = await nvim.buffer.getLines({
+        start: context.startPos[1] - 1,
+        end: context.endPos[1],
+        strictIndexing: false,
+    });
+    context.lines = _.chain(lines)
+        .toPairs()
+        .map(([lnum, ltext]) => {
+            let startPos = context.startPos;
+            return [startPos[1] + _.parseInt(lnum), ltext];
+        })
+        .fromPairs()
+        .value();
 
-    nvim._context = context;
+    context.visual = _.chain(context.lines)
+        .toPairs()
+        .map(([lnum, ltext]) => {
+            let vtext = ltext;
+            let startPos = context.startPos;
+            let endPos = context.endPos;
+            // if (calcPosIndex(startPos) > calcPosIndex(endPos)) {
+            //     startPos = context.endPos;
+            //     endPos = context.startPos;
+            // }
+            if (lnum == startPos[1]) {
+                vtext = ltext.slice(startPos[2])
+            }
+            if (lnum == endPos[1]) {
+                vtext = ltext.slice(0, endPos[2])
+            }
+
+            return [lnum, vtext]
+        })
+        .fromPairs()
+        .value();
+
+    console.log(context.visual);
+    return context;
 }
 
-async function getWrappedContent(nvim, wrap) {
-    let [begin, end] = wrap.split('');
-    // await nvim.command(`normal vi${begin}"9y\`\``);
+// state module
+function calcPosIndex(pos) {
+    return pos[1] + (1 - 1/pos[2]);
+}
+
+let _visualLock = false;
+function getVisualRange(nvim, context) {
+    let startPos = context.startPos;
+    let endPos = context.endPos;
+
+    if (_visualLock) {
+        return Promise.resolve([
+            startPos, endPos
+        ]);
+    }
+
+    _visualLock = true;
+    return nvim.input('o')
+        .then(() => {
+            return nvim.eval('getpos(".")');
+        })
+        .then((pos) => {
+            startPos = pos;
+            return nvim.input('o')
+        })
+        .then(() => {
+            return nvim.eval('getpos(".")');
+        })
+        .then((pos) => {
+            endPos = pos;
+            setTimeout(() => {
+                _visualLock = false;
+            }, 500);
+            return [startPos, endPos]
+        })
+}
+
+function state(nvim, transition) {
+    switch (transition) {
+        case 'n -> v':
+return async (context) => {
+    let visualRange = await getVisualRange(nvim, context);
+    context.startPos = visualRange[0];
+    context.endPos = visualRange[1];
+    return context;
+}
+        case 'n -> V':
+return async (context) => {
+    context.endPos = context.currentPos;
+    return context;
+}
+        case 'v -> v':
+return async (context) => {
+    // let visualRange = await getVisualRange(nvim, context);
+    // context.startPos = visualRange[0];
+    // context.endPos = visualRange[1];
+    return context;
+}
+        case 'v -> V':
+        case 'V -> v':
+        case 'V -> V':
+return async (context) => {
+    context.endPos = context.currentPos;
+    return context;
+}
+        case 'v -> n':
+        case 'V -> n':
+return async (context) => {
+    context.startPos = context.currentPos;
+    context.endPos = context.currentPos;
+    return context;
+}
+        case 'n -> n':
+return async (context) => {
+    context.startPos = context.currentPos;
+    context.endPos = context.currentPos;
+    return context;
+}
+        default:
+return async (context) => {
+    context.endPos = context.currentPos;
+}
+    }
 }
