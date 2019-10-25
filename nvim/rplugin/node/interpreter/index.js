@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs');
 const eol = require('eol');
+const state = require('./state');
 
 _.mixin({
     lines: (val) => {
@@ -22,68 +23,81 @@ module.exports = plugin => {
         }
     }, {sync: false});
 
-    plugin.registerAutocmd('BufEnter', async (fileName) => {
-        if (plugin.nvim._output) {
-            debugger;
-            let output = plugin.nvim._output;
-            plugin.nvim._output = null;
-
-            try {
-                await Promise.all(_.chain(output)
-                    .lines()
-                    .map(async (line) => {
-                        await plugin.nvim.buffer.append(line);
-                    })
-                )
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-    }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
-
     plugin.registerAutocmd('CursorMoved', async (fileName) => {
         if (fileName == '/tmp/_interpreter.js') {
-
-        } else {
-            let context = plugin.nvim._context || {};
-            context.mode = await plugin.nvim.mode;
-            context.line = await plugin.nvim.getLine();
-            context.word = await plugin.nvim.commandOutput(`echo expand("<cword>")`);
-            context.Word = await plugin.nvim.commandOutput(`echo expand("<cWORD>")`);
-
-            context.currentPos = _.split(await plugin.nvim.eval(`getpos(".")`), ',');
-            context.startPos = _.split(await plugin.nvim.eval(`getpos("'<")`), ',');
-            context.endPos = _.split(await plugin.nvim.eval(`getpos("'>")`), ',');
-
-            context.lines = context.lines || {};
-            if (['v', 'V'].indexOf(context.mode.mode) >= 0) {
-                context.lines[context.currentPos[1]] = context.line;
-            } else {
-                context.lines = {
-                    [context.currentPos[1]]: context.line,
-                }
-            }
-            // context.visual = [];
-            // for (let i = context.startPos[1]; i <= context.endPos[1]; i++) {
-            //     let offsetLeft = i == context.startPos[1] ? context.startPos[1] - 1 : 0;
-            //     let offsetRight = i == context.endPos[1] ? context.endPos[1] - 1 : Infinity;
-
-            //     context.visual.push(
-            //         context.lines[i].split(offsetLeft, offsetRight)
-            //     );
-            // }
-
-            console.log(context.startPos, context.endPos);
-            context.prevMode = context.mode;
-            plugin.nvim._context = context;
+            return;
         }
+
+        plugin.nvim._context;
+        await updateContext(plugin.nvim);
+    }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
+
+    plugin.registerAutocmd('CursorHold', async (fileName) => {
+        if (fileName == '/tmp/_interpreter.js') {
+            return;
+        }
+
+        // await updateContext(plugin.nvim);
+    }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
+
+    plugin.registerAutocmd('BufEnter', async (fileName) => {
+        if (fileName == '/tmp/_interpreter.js') {
+            return;
+        }
+
+        // plugin.nvim._interval = setInterval(async () => {
+        //     await updateContext(plugin.nvim);
+        // }, 1000)
+        // await updateContext(plugin.nvim);
     }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
 
     plugin.registerAutocmd('BufLeave', async (fileName) => {
         if (fileName == '/tmp/_interpreter.js') {
             let content = fs.readFileSync('/tmp/_interpreter.js').toString();
             plugin.nvim._output = content;
+            return;
         }
+
+        clearInterval(plugin.nvim._interval);
     }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
 };
+
+async function updateContext(nvim) {
+    let context = nvim._context || {
+        mode: 'n',
+        tmpMode: 'n',
+        prevMode: 'n',
+    };
+
+    context.mode = _.get(await nvim.mode, 'mode');
+    context.modeChanged = false;
+
+    context.lines = context.lines || {};
+    context.visual = context.visual || {};
+    context.Line = await nvim.getLine();
+    context.line = _.trimStart(context.Line);
+    context.word = await nvim.commandOutput(`echo expand("<cword>")`);
+    context.Word = await nvim.commandOutput(`echo expand("<cWORD>")`);
+
+    context.prevPos = context.currentPos;
+    context.currentPos = _.split(await nvim.eval(`getpos(".")`), ',').map(_.parseInt);
+    context.quote = await getWrappedContent(nvim, "''");
+    context.dquote = await getWrappedContent(nvim, '""');
+    context.paren = await getWrappedContent(nvim, '()');
+
+    if (context.tmpMode != context.mode) {
+        context.prevMode = context.tmpMode;
+        context.tmpMode = context.mode;
+        context.modeChanged = true;
+    }
+
+    const transition = `${context.tmpMode} -> ${context.mode}`;
+    context = state(transition) ? state(transition)(context) : state('*')(context);
+
+    nvim._context = context;
+}
+
+async function getWrappedContent(nvim, wrap) {
+    let [begin, end] = wrap.split('');
+    // await nvim.command(`normal vi${begin}"9y\`\``);
+}
