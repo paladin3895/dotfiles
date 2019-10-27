@@ -1,3 +1,4 @@
+
 const _ = require('lodash');
 const fs = require('fs');
 const eol = require('eol');
@@ -11,114 +12,134 @@ _.mixin({
     },
 })
 
+const scriptPath = '/tmp/_interpreter.js';
+
 module.exports = plugin => {
     plugin.setOptions({dev: true});
 
     plugin.registerCommand('Interpreter', async () => {
         try {
-            await plugin.nvim.command('belowright split /tmp/_interpreter.js');
+            await plugin.nvim.command(`belowright split ${scriptPath}`);
         } catch (err) {
             console.error(err);
         }
     }, {sync: false});
 
-    plugin.registerAutocmd('CursorMoved', async (fileName) => {
-        if (fileName == '/tmp/_interpreter.js') {
+    plugin.registerAutocmd('BufWrite', async (fileName) => {
+        if (fileName == scriptPath) {
+            let script = fs.readFileSync(scriptPath).toString();
+            plugin.nvim._script = script;
             return;
         }
 
-        await updateContext(plugin.nvim);
-    }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
-
-    plugin.registerAutocmd('CursorHold', async (fileName) => {
-        if (fileName == '/tmp/_interpreter.js') {
-            return;
-        }
-
-        await updateContext(plugin.nvim);
     }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
 
     plugin.registerAutocmd('BufEnter', async (fileName) => {
-        if (fileName == '/tmp/_interpreter.js') {
+        if (fileName == scriptPath) {
+            // fs.writeFileSync(scriptPath, '');
             return;
         }
 
-        let context = await updateContext(plugin.nvim);
-    }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
-
-    plugin.registerAutocmd('BufLeave', async (fileName) => {
-        if (fileName == '/tmp/_interpreter.js') {
-            let content = fs.readFileSync('/tmp/_interpreter.js').toString();
-            plugin.nvim._output = content;
-            return;
+        if (plugin.nvim._script) {
+            await execute(plugin.nvim._script, plugin.nvim)
+            plugin.nvim._script = null;
         }
-
-        clearInterval(plugin.nvim._interval);
     }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
 };
 
-async function updateContext(nvim) {
-    let context = nvim._context || {
-        mode: 'n',
-        tmpMode: 'n',
-        prevMode: 'n',
-    };
+async function execute(script, nvim) {
+    const {
+        mode,
+        currentPos, startPos, endPos,
+        line, Line, lines,
+        word, Word,
+        visual, vis,
+    } = await getContext(nvim);
 
-    context.mode = _.get(await nvim.mode, 'mode');
-    context.modeChanged = false;
+    let result = eval(script);
 
-    context.lines = context.lines || {};
-    context.visual = context.visual || {};
+    if (result.then) {
+        result = await result;
+    }
+
+    if (_.isArray(result)) {
+        result = _.join(result, '\n');
+    }
+
+    let escapedResult = _.replace(result, /"/, '\\"');
+
+    return nvim.command(`let @"="${escapedResult}"`)
+        .then(() => {
+            return nvim.mode;
+        })
+        .then((modeData) => {
+            const mode = _.get(modeData, 'mode');
+
+            if (mode == 'n') {
+                return nvim.input(`V""p`);
+            }
+
+            if (mode == 'v') {
+                return nvim.input(`""p`);
+            }
+
+            if (mode == 'V') {
+                return nvim.input(`""p`);
+            }
+        })
+}
+
+async function getContext(nvim) {
+    const mode = _.get(await nvim.mode, 'mode');
+    const visual =  await getVisualContext(nvim);
+    const normal =  await getNormalContext(nvim);
+
+    return {
+        ...normal, ...visual, mode,
+    }
+}
+
+async function getNormalContext(nvim) {
+    let context = {};
     context.Line = await nvim.getLine();
     context.line = _.trimStart(context.Line);
     context.word = await nvim.commandOutput(`echo expand("<cword>")`);
     context.Word = await nvim.commandOutput(`echo expand("<cWORD>")`);
 
-    context.prevPos = context.currentPos;
     context.currentPos = _.split(await nvim.eval(`getpos(".")`), ',').map(_.parseInt);
+    return context;
+}
 
-    const transition = `${context.tmpMode} -> ${context.mode}`;
-    if (context.tmpMode != context.mode) {
-        context.prevMode = context.tmpMode;
-        context.tmpMode = context.mode;
-        context.modeChanged = true;
+async function getVisualContext(nvim) {
+    let [startPos, endPos] = await getVisualRange(nvim);
+    if (calcPosIndex(startPos) > calcPosIndex(endPos)) {
+        [startPos, endPos] = [endPos, startPos];
     }
 
-    context = state(nvim, transition) ? await state(nvim, transition)(context) : await state(nvim, '*')(context);
-    if (context.startPos[1] > context.endPos[1]) {
-        let tmp = context.endPos;
-        context.endPos = context.startPos;
-        context.startPos = tmp;
-    }
-    const lines = await nvim.buffer.getLines({
-        start: context.startPos[1] - 1,
-        end: context.endPos[1],
+    let lines = await nvim.buffer.getLines({
+        start: startPos[1] - 1,
+        end: endPos[1],
         strictIndexing: false,
     });
-    context.lines = _.chain(lines)
+    let visual = {};
+
+    lines = _.chain(lines)
         .toPairs()
         .map(([lnum, ltext]) => {
-            let startPos = context.startPos;
             return [startPos[1] + _.parseInt(lnum), ltext];
         })
         .fromPairs()
         .value();
 
-    context.visual = _.chain(context.lines)
+    visual = _.chain(lines)
         .toPairs()
         .map(([lnum, ltext]) => {
             let vtext = ltext;
-            let startPos = context.startPos;
-            let endPos = context.endPos;
-            // if (calcPosIndex(startPos) > calcPosIndex(endPos)) {
-            //     startPos = context.endPos;
-            //     endPos = context.startPos;
-            // }
             if (lnum == startPos[1]) {
-                vtext = ltext.slice(startPos[2])
+                vtext = vtext.slice(startPos[2] - 1)
             }
             if (lnum == endPos[1]) {
-                vtext = ltext.slice(0, endPos[2])
+                vtext = vtext.slice(0, endPos[2] - startPos[2])
             }
 
             return [lnum, vtext]
@@ -126,91 +147,34 @@ async function updateContext(nvim) {
         .fromPairs()
         .value();
 
-    console.log(context.visual);
-    return context;
+    return {
+        startPos,
+        endPos,
+        lines,
+        visual,
+        vis: _.chain(visual).values().join('\n').value(),
+    }
 }
 
-// state module
 function calcPosIndex(pos) {
     return pos[1] + (1 - 1/pos[2]);
 }
 
-let _visualLock = false;
-function getVisualRange(nvim, context) {
-    let startPos = context.startPos;
-    let endPos = context.endPos;
+function getVisualRange(nvim) {
+    let startPos = [];
+    let endPos = [];
 
-    if (_visualLock) {
-        return Promise.resolve([
-            startPos, endPos
-        ]);
-    }
+    return nvim.input('gv')
+        .then(() => {
+            return Promise.all([
+                nvim.eval(`getpos("'<")`),
+                nvim.eval(`getpos("'>")`),
+            ]);
+        })
+        .then(([start, end]) => {
+            startPos = start;
+            endPos = end;
 
-    _visualLock = true;
-    return nvim.input('o')
-        .then(() => {
-            return nvim.eval('getpos(".")');
-        })
-        .then((pos) => {
-            startPos = pos;
-            return nvim.input('o')
-        })
-        .then(() => {
-            return nvim.eval('getpos(".")');
-        })
-        .then((pos) => {
-            endPos = pos;
-            setTimeout(() => {
-                _visualLock = false;
-            }, 500);
             return [startPos, endPos]
         })
-}
-
-function state(nvim, transition) {
-    switch (transition) {
-        case 'n -> v':
-return async (context) => {
-    let visualRange = await getVisualRange(nvim, context);
-    context.startPos = visualRange[0];
-    context.endPos = visualRange[1];
-    return context;
-}
-        case 'n -> V':
-return async (context) => {
-    context.endPos = context.currentPos;
-    return context;
-}
-        case 'v -> v':
-return async (context) => {
-    // let visualRange = await getVisualRange(nvim, context);
-    // context.startPos = visualRange[0];
-    // context.endPos = visualRange[1];
-    return context;
-}
-        case 'v -> V':
-        case 'V -> v':
-        case 'V -> V':
-return async (context) => {
-    context.endPos = context.currentPos;
-    return context;
-}
-        case 'v -> n':
-        case 'V -> n':
-return async (context) => {
-    context.startPos = context.currentPos;
-    context.endPos = context.currentPos;
-    return context;
-}
-        case 'n -> n':
-return async (context) => {
-    context.startPos = context.currentPos;
-    context.endPos = context.currentPos;
-    return context;
-}
-        default:
-return async (context) => {
-    context.endPos = context.currentPos;
-}
-    }
 }
