@@ -1,4 +1,3 @@
-
 const _ = require('lodash');
 const fs = require('fs');
 const eol = require('eol');
@@ -8,7 +7,17 @@ _.mixin({
         return eol.split(val);
     },
     words: (val) => {
-        return _.split(val, /[\s]+/);
+        return _.split(val, /[\,\;\s]+/);
+    },
+    wrap: (val, chars) => {
+    debugger;
+        const [begin, end] = _.split(chars, '');
+
+        if (_.isArray(val)) {
+            return _.map(val, (v) => _.wrap(v, chars));
+        }
+
+        return `${begin}${val}${end}`;
     },
 })
 
@@ -56,17 +65,23 @@ async function execute(script, nvim) {
         visual, vis,
     } = await getContext(nvim);
 
-    let result = eval(script);
+    let result;
+    try {
+        result = eval(script);
 
-    if (result.then) {
-        result = await result;
+        if (result.then) {
+            result = await result;
+        }
+
+        if (_.isArray(result)) {
+            result = _.join(result, '\n');
+        }
+
+    } catch (err) {
+        console.error(err);
     }
 
-    if (_.isArray(result)) {
-        result = _.join(result, '\n');
-    }
-
-    let escapedResult = _.replace(result, /"/, '\\"');
+    let escapedResult = _.replace(result, /"/g, '\\"');
 
     return nvim.command(`let @"="${escapedResult}"`)
         .then(() => {
@@ -139,7 +154,7 @@ async function getVisualContext(nvim) {
                 vtext = vtext.slice(startPos[2] - 1)
             }
             if (lnum == endPos[1]) {
-                vtext = vtext.slice(0, endPos[2] - startPos[2])
+                vtext = vtext.slice(0, endPos[2] - startPos[2] + 1)
             }
 
             return [lnum, vtext]
