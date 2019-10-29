@@ -10,7 +10,6 @@ _.mixin({
         return _.split(val, /[\,\;\s]+/);
     },
     wrap: (val, chars) => {
-    debugger;
         const [begin, end] = _.split(chars, '');
 
         if (_.isArray(val)) {
@@ -19,6 +18,9 @@ _.mixin({
 
         return `${begin}${val}${end}`;
     },
+    strToArray: (val) => {
+        return _.chain(val).words().wrap('""').join(', ').wrap('[]').value();
+    },
 })
 
 const scriptPath = '/tmp/_interpreter.js';
@@ -26,9 +28,18 @@ const scriptPath = '/tmp/_interpreter.js';
 module.exports = plugin => {
     plugin.setOptions({dev: true});
 
-    plugin.registerCommand('Interpreter', async () => {
+    plugin.registerCommand('Semicolon', async () => {
         try {
             await plugin.nvim.command(`belowright split ${scriptPath}`);
+        } catch (err) {
+            console.error(err);
+        }
+    }, {sync: false});
+
+    plugin.registerCommand('SemicolonRun', async () => {
+        try {
+            let script = fs.readFileSync(scriptPath).toString();
+            await execute(script, plugin.nvim)
         } catch (err) {
             console.error(err);
         }
