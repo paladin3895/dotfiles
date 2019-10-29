@@ -19,7 +19,7 @@ _.mixin({
         return `${begin}${val}${end}`;
     },
     strToArray: (val) => {
-        return _.chain(val).words().wrap('""').join(', ').wrap('[]').value();
+        return _.chain(val).words().filter().wrap('""').join(', ').wrap('[]').value();
     },
 })
 
@@ -29,19 +29,17 @@ module.exports = plugin => {
     plugin.setOptions({dev: true});
 
     plugin.registerCommand('Semicolon', async () => {
-        try {
-            await plugin.nvim.command(`belowright split ${scriptPath}`);
-        } catch (err) {
-            console.error(err);
-        }
+        await plugin.nvim.command(`belowright split ${scriptPath}`);
     }, {sync: false});
 
     plugin.registerCommand('SemicolonRun', async () => {
+        let script = fs.readFileSync(scriptPath).toString();
+
         try {
-            let script = fs.readFileSync(scriptPath).toString();
             await execute(script, plugin.nvim)
         } catch (err) {
-            console.error(err);
+            let escapedError = _.replace(err.message, /"/g, '\\"');
+            await plugin.nvim.command(`echom "${escapedError}"`)
         }
     }, {sync: false});
 
@@ -61,7 +59,13 @@ module.exports = plugin => {
         }
 
         if (plugin.nvim._script) {
-            await execute(plugin.nvim._script, plugin.nvim)
+            try {
+                await execute(plugin.nvim._script, plugin.nvim)
+            } catch (err) {
+                let escapedError = _.replace(err.message, /"/g, '\\"');
+                await plugin.nvim.command(`echom "${escapedError}"`)
+            }
+
             plugin.nvim._script = null;
         }
     }, {sync: false, pattern: '*', eval: 'expand("<afile>")'})
@@ -77,19 +81,14 @@ async function execute(script, nvim) {
     } = await getContext(nvim);
 
     let result;
-    try {
-        result = eval(script);
+    result = eval(script);
 
-        if (result.then) {
-            result = await result;
-        }
+    if (result.then) {
+        result = await result;
+    }
 
-        if (_.isArray(result)) {
-            result = _.join(result, '\n');
-        }
-
-    } catch (err) {
-        console.error(err);
+    if (_.isArray(result)) {
+        result = _.join(result, '\n');
     }
 
     let escapedResult = _.replace(result, /"/g, '\\"');
