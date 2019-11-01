@@ -18,8 +18,21 @@ _.mixin({
 
         return `${begin}${val}${end}`;
     },
+    unwrap: (val) => {
+        if (_.isArray(val)) {
+            return _.map(val, (v) => _.unwrap(v));
+        }
+
+        return val.replace(/^\s*(\(|\{|\[|\'|\"|\`)(.*?)(\)|\}|\]|\'|\"|\`)\s*$/, '$2');
+    },
     strToArray: (val) => {
-        return _.chain(val).words().filter().wrap('""').join(', ').wrap('[]').value();
+        return _.chain(val)
+            .words()
+            .filter()
+            .wrap('""')
+            .join(', ')
+            .wrap('[]')
+            .value();
     },
 })
 
@@ -89,6 +102,10 @@ async function execute(script, nvim) {
 
     if (_.isArray(result)) {
         result = _.join(result, '\n');
+    }
+
+    if (_.get(result, '__chain__')) {
+        result = result.value();
     }
 
     let escapedResult = _.replace(result, /"/g, '\\"');
