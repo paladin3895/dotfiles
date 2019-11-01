@@ -413,9 +413,49 @@ if !exists('*s:setupWrapping')
   endfunction
 endif
 
+"" use cscope
+" if has('cscope')
+"   set cscopetag cscopeverbose
+
+"   if has('quickfix')
+"     set cscopequickfix=s-,c-,d-,i-,t-,e-
+"   endif
+
+"   " C symbol
+"   nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+"   " definition
+"   nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+"   " functions that called by this function
+"   nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+"   " funtions that calling this function
+"   nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+"   " test string
+"   nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+"   " egrep pattern
+"   nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+"   " file
+"   nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+"   " files #including this file
+"   nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+
+"   " cnoreabbrev csa cs add
+"   " cnoreabbrev csf cs find
+"   " cnoreabbrev csk cs kill
+"   " cnoreabbrev csr cs reset
+"   " cnoreabbrev css cs show
+"   " cnoreabbre
+
+"   " command! -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
+" endif
+
 "*****************************************************************************
 "" Autocmd Rules
 "*****************************************************************************
+"" update cscope
+" augroup update-cscope
+"   autocmd!
+"   autocmd BufEnter * :syntax sync maxlines=1000
+" augroup END
 
 "" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
 augroup vimrc-sync-fromstart
@@ -771,11 +811,16 @@ nnoremap <leader>;t :DBDescribeTable<CR>
 nnoremap <leader>;d :DBListTable<CR>
 nnoremap <leader>;s :DBSelectFromTableWithWhere<CR>
 nnoremap <leader>;* :DBListColumn<CR>
+
+nnoremap <leader>;; :Semicolon<CR>
+nnoremap <leader>;> :SemicolonRun<CR>
+
 vnoremap <leader>;u :call GenerateUpdate()<CR>
 vnoremap <leader>;i :call GenerateCreate()<CR>
 vnoremap <leader>;v :call ViewTable()<CR>
 vnoremap <leader>;_ :call Lodash()<CR>
-vnoremap <leader>;; :call ExecuteScript()<CR>
+vnoremap <leader>;; <ESC>:Semicolon<CR>
+vnoremap <leader>;> <ESC>:SemicolonRun<CR>
 
 "*****************************************************************************
 "" Functions
