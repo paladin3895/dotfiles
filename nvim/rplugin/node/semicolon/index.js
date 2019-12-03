@@ -1,6 +1,11 @@
 const _ = require('lodash');
+const U = require('urijs')
+const M = require('moment');
+const V = require('voca');
+const XR = require('xregexp');
 const fs = require('fs');
 const eol = require('eol');
+const { plural, singular } = require('pluralize');
 
 _.mixin({
     lines: (val) => {
@@ -34,6 +39,8 @@ _.mixin({
             .wrap('[]')
             .value();
     },
+    plural,
+    singular,
 })
 
 const scriptPath = '/tmp/_interpreter.js';

@@ -10,6 +10,11 @@
   "license": "ISC",
   "dependencies": {
     "eol": "^0.9.1",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "pluralize": "^8.0.0",
+    "urijs": "^1.19.2",
+    "voca": "^1.4.0",
+    "xregexp": "^4.2.4"
   }
 }
