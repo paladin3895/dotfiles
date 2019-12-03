@@ -90,6 +90,8 @@ Plug 'mattn/emmet-vim'
 
 Plug 'scrooloose/vim-slumlord'
 Plug 'aklt/plantuml-syntax'
+Plug 'weirongxu/plantuml-previewer.vim'
+Plug 'tyru/open-browser.vim'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
