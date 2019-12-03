@@ -78,11 +78,18 @@ Plug 'honza/vim-snippets'
 Plug 'thinca/vim-quickrun'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'jpalardy/vim-slime'
-Plug 'godlygeek/tabular'
 
 Plug 'Shougo/neco-vim'
 Plug 'neoclide/coc-neco'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+Plug 'godlygeek/tabular'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+
+Plug 'mattn/emmet-vim'
+
+Plug 'scrooloose/vim-slumlord'
+Plug 'aklt/plantuml-syntax'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
