@@ -78,6 +78,7 @@ Plug 'honza/vim-snippets'
 Plug 'thinca/vim-quickrun'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'jpalardy/vim-slime'
+Plug 'godlygeek/tabular'
 
 Plug 'Shougo/neco-vim'
 Plug 'neoclide/coc-neco'
