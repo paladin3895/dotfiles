@@ -78,20 +78,18 @@ Plug 'honza/vim-snippets'
 Plug 'thinca/vim-quickrun'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'jpalardy/vim-slime'
+Plug 'godlygeek/tabular'
 
 Plug 'Shougo/neco-vim'
 Plug 'neoclide/coc-neco'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-Plug 'godlygeek/tabular'
 Plug 'Xuyuanp/nerdtree-git-plugin'
-
 Plug 'mattn/emmet-vim'
-
 Plug 'scrooloose/vim-slumlord'
 Plug 'aklt/plantuml-syntax'
 Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'tyru/open-browser.vim'
+Plug 'diepm/vim-rest-console'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -117,6 +115,18 @@ if v:version >= 704
   "" Snippets
   " Plug 'SirVer/ultisnips'
 endif
+
+" enable gtags module
+" let g:gutentags_modules = ['ctags', 'gtags_cscope']
+
+" config project root markers.
+" let g:gutentags_project_root = []
+
+" generate datebases in my cache directory, prevent gtags files polluting my project
+" let g:gutentags_cache_dir = expand('~/.cache/tags')
+
+" change focus to quickfix window after search (optional).
+" let g:gutentags_plus_switch = 1
 
 " set statusline+=%{gutentags#statusline()}
 
@@ -232,7 +242,9 @@ else
 endif
 
 " Live substitute
-set inccommand=nosplit
+if has('nvim')
+    set inccommand=nosplit
+endif
 
 " session management
 let g:session_directory = "~/.config/nvim/session"
@@ -249,9 +261,20 @@ let g:vimwiki_list = [{'path': '~/vimwiki', 'syntax': 'markdown', 'ext': '.wiki'
 " v-slime
 let g:slime_target = "tmux"
 let g:slime_paste_file = tempname()
+let g:slime_haskell_ghci_add_let = 0
+
+" vim-rest-console
+let g:vrc_split_request_body = 1
+let g:vrc_curl_opts = {
+  \ '--connect-timeout' : 10,
+  \ '--max-time': 60,
+  \ '--ipv4': '',
+  \ '-s': '',
+  \ '-k': '',
+\}
 
 " Use your key
-" noremap <leader><bar>x :Pipe 
+" noremap <leader><bar>x :Pipe
 " noremap <leader><bar>c :PipeToggleWindow<CR>
 "*****************************************************************************
 "" Visual Settings
@@ -391,7 +414,6 @@ nnoremap <silent> <F2> :NERDTreeFind<CR>
 noremap <F3> :NERDTreeToggle<CR>
 
 " grep.vim
-nnoremap <silent> <leader>f :Rgrep<CR>
 let Grep_Default_Options = '-IR'
 let Grep_Skip_Files = '*.log *.db'
 let Grep_Skip_Dirs = '.git node_modules'
@@ -779,15 +801,6 @@ nnoremap <A-h> :vertical resize +10<CR>
 nnoremap <A-l> :vertical resize -10<CR>
 
 " Surround in visual mode
-vnoremap <Leader>' c'<Esc>pa'<Esc>
-vnoremap <Leader>" c"<Esc>pa"<Esc>
-vnoremap <Leader>` c`<Esc>pa`<Esc>
-vnoremap <Leader>( c(<Space><Esc>pa<Space>)<Esc>
-vnoremap <Leader>) c(<Esc>pa)<Esc>
-vnoremap <Leader>[ c[<Space><Esc>pa<Space>]<Esc>
-vnoremap <Leader>] c[<Esc>pa]<Esc>
-vnoremap <Leader>{ c{<Space><Esc>pa<Space>}<Esc>
-vnoremap <Leader>} c{<Esc>pa}<Esc>
 vnoremap ~ y:call setreg('', TwiddleCase(@"), getregtype(''))<CR>gv""Pgv
 
 " Terminal mapping
