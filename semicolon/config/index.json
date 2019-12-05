@@ -5,8 +5,8 @@
     "command": "mpcmenu rofi --dmenu"
   },
   {
-    "name": "download music",
-    "command": "xpaste | dlm; notify-send \"MPD Database Updated\"; mpc -q update"
+    "name": "vim editor",
+    "command": "~/.vim-anywhere/bin/run"
   },
   {
     "name": "area screenshot",
