@@ -264,6 +264,7 @@ let g:slime_paste_file = tempname()
 let g:slime_haskell_ghci_add_let = 0
 
 " vim-rest-console
+let g:vrc_output_buffer_name = '__VRC_OURPUT__.json'
 let g:vrc_split_request_body = 1
 let g:vrc_curl_opts = {
   \ '--connect-timeout' : 10,
@@ -272,6 +273,11 @@ let g:vrc_curl_opts = {
   \ '-s': '',
   \ '-k': '',
 \}
+
+augroup vrc-set-modifiable
+  autocmd!
+  autocmd BufEnter __VRC_OURPUT__.json :set modifiable | %!python -m json.tool
+augroup END
 
 " Use your key
 " noremap <leader><bar>x :Pipe
