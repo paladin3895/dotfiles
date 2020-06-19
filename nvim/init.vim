@@ -56,7 +56,7 @@ Plug 'flazz/vim-colorschemes'
 Plug 'vim-scripts/vimwiki'
 " Plug 'gerw/vim-latex-suite'
 Plug 'posva/vim-vue'
-Plug 'mxw/vim-jsx'
+" Plug 'mxw/vim-jsx'
 Plug 'terryma/vim-multiple-cursors'
 " Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
 Plug 'vim-scripts/dbext.vim'
@@ -144,7 +144,6 @@ Plug 'tomasr/molokai'
 "*****************************************************************************
 "" Custom bundles
 "*****************************************************************************
-
 " javascript
 "" Javascript Bundle
 Plug 'jelera/vim-javascript-syntax'
@@ -496,6 +495,11 @@ endif
 " augroup END
 
 "" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
+
+augroup vimrc-javascript
+    autocmd BufNewFile,BufRead *.js set syntax=javascript
+augroup END
+
 augroup vimrc-sync-fromstart
   autocmd!
   autocmd BufEnter * :syntax sync maxlines=200
@@ -828,26 +832,37 @@ source ~/.config/nvim/db.vim
 "*****************************************************************************
 source ~/.config/nvim/coc.vim
 
-" let g:dbext_default_MYSQL_extra = '--batch --raw'
+let g:dbext_default_MYSQL_extra = '--batch --raw'
 
-nnoremap <leader>;? :DBSetOption profile=
-nnoremap <leader>;x :DBExecSQLUnderCursor<CR>
-vnoremap <leader>;x :DBExecVisualSQL<CR>
-nnoremap <leader>;c :DBResultsClose<CR>
-nnoremap <leader>;c :SyntasticToggleMode<CR>
-nnoremap <leader>;o :DBResultsOpen<CR>
-nnoremap <leader>;t :DBDescribeTable<CR>
-nnoremap <leader>;d :DBListTable<CR>
-nnoremap <leader>;s :DBSelectFromTableWithWhere<CR>
-nnoremap <leader>;* :DBListColumn<CR>
+augroup sqlbindings
+    autocmd! sqlbindings
+    autocmd Filetype sql nnoremap <leader>;? :DBSetOption profile=
+    autocmd Filetype sql nnoremap <leader>;x :DBExecSQLUnderCursor<CR>
+    autocmd Filetype sql vnoremap <leader>;x :DBExecVisualSQL<CR>
+    autocmd Filetype sql nnoremap <leader>;c :DBResultsClose<CR>
+    autocmd Filetype sql nnoremap <leader>;o :DBResultsOpen<CR>
+    autocmd Filetype sql nnoremap <leader>;t :DBDescribeTable<CR>
+    autocmd Filetype sql nnoremap <leader>;d :DBListTable<CR>
+    autocmd Filetype sql nnoremap <leader>;s :DBSelectFromTableWithWhere<CR>
+    autocmd Filetype sql nnoremap <leader>;* :DBListColumn<CR>
+augroup end
 
+augroup resultbindings
+    autocmd! resultbindings
+    autocmd BufEnter Result vnoremap <leader>;u :call GenerateUpdate()<CR>
+    autocmd BufEnter Result vnoremap <leader>;i :call GenerateCreate()<CR>
+augroup end
+
+augroup csvbindings
+    autocmd! csvbindings
+    autocmd Filetype csv vnoremap <leader>;u :call GenerateUpdate()<CR>
+    autocmd Filetype csv vnoremap <leader>;i :call GenerateCreate()<CR>
+augroup end
+
+vnoremap <leader>;v :call ViewTable()<CR>
 nnoremap <leader>;; :Semicolon<CR>
 nnoremap <leader>;> :SemicolonRun<CR>
 
-vnoremap <leader>;u :call GenerateUpdate()<CR>
-vnoremap <leader>;i :call GenerateCreate()<CR>
-vnoremap <leader>;v :call ViewTable()<CR>
-vnoremap <leader>;_ :call Lodash()<CR>
 vnoremap <leader>;; <ESC>:Semicolon<CR>
 vnoremap <leader>;> <ESC>:SemicolonRun<CR>
 

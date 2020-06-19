@@ -16,7 +16,13 @@ function handle(chain, _) {
                 })
                 .map(value => {
 
-                    const valueSql = _.isString(value) ? `"${value.replace(/\"/g, '\\"')}"` : value;
+                    let valueSql = value;
+
+                    if (value == "NULL") {
+                        // do nothing
+                    } else {
+                        valueSql = _.isString(value) ? `"${value.replace(/\"/g, '\\"')}"` : value;
+                    }
 
                     return valueSql;
                 })

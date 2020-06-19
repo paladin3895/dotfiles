@@ -3,6 +3,8 @@ const os = require('os');
 const template = fs.readFileSync(`${__dirname}/../templates/update.sql`);
 
 function handle(chain, _) {
+  let key = '<none>';
+
   return chain
     .map((item) => {
       const fields = _.keys(item);
@@ -17,7 +19,18 @@ function handle(chain, _) {
       const update = _.chain(fields)
         .zip(values)
         .map(([field, value]) => {
-          const valueSql = _.isString(value) ? `"${value.replace(/\"/g, '\\"')}"` : value;
+
+          let valueSql = value;
+
+          if (value == "NULL") {
+            // do nothing
+          } else {
+            valueSql = _.isString(value) ? `"${value.replace(/\"/g, '\\"')}"` : value;
+          }
+
+          if (field == 'id') {
+            key = valueSql;
+          }
 
           return `\`${field}\` = ${valueSql}`;
         })
@@ -26,7 +39,7 @@ function handle(chain, _) {
       // console.log(update)
       return _.chain(template)
         .replace('/* update */', update.join(', '))
-        .replace('/* condition */', update.join(', '))
+        .replace('/* condition */', `\`id\` = ${key}`)
         .value()
     })
     .join('')
