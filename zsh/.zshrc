@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-  export ZSH=/home/king/.oh-my-zsh
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -62,12 +62,10 @@ ZSH_THEME="spaceship"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux git-flow vi-mode wd zsh-syntax-highlighting)
+plugins=(git tmux git-flow git-extras vi-mode wd zsh-syntax-highlighting zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
-source /etc/environment
-source ~/.utilities
-source ~/.aliases
+
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -91,6 +89,27 @@ source ~/.aliases
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
+source ~/.utilities
+source ~/.aliases
+source ~/.custom
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+export DENO_INSTALL="$HOME/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$(\"$HOME/anaconda3/bin/conda\" 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup" 1>/dev/null
+else
+    if [ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "$HOME/anaconda3/etc/profile.d/conda.sh"
+    else
+    fi
+fi
+export PATH="$HOME/anaconda3/bin:$PATH"
+unset __conda_setup
+# <<< conda initialize <<<
